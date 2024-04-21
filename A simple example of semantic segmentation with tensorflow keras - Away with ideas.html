@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<!-- saved from url=(0090)https://awaywithideas.com/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/ -->
+<html lang="en" class=" js "><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+
+<!-- begin _includes/seo.html --><title>A simple example of semantic segmentation with tensorflow keras - Away with ideas</title>
+<meta name="description" content="A implementation of a semantic segmentation model using a simple dataset and a very basic architecture.">
+
+
+  <meta name="author" content="Luke Tonin">
+  
+  <meta property="article:author" content="Luke Tonin">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_UK">
+<meta property="og:site_name" content="Away with ideas">
+<meta property="og:title" content="A simple example of semantic segmentation with tensorflow keras">
+<meta property="og:url" content="127.0.0.1/4000/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/">
+
+
+  <meta property="og:description" content="A implementation of a semantic segmentation model using a simple dataset and a very basic architecture.">
+
+
+
+  <meta property="og:image" content="127.0.0.1/4000/assets/images/2020/10/semantic_segmentation_27_7.png">
+
+
+
+
+
+  <meta property="article:published_time" content="2020-10-27T22:33:49+00:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://awaywithideas.com/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/127.0.0.1/4000/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/">
+
+
+
+
+<script type="text/javascript" async="" src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/ga.js"></script><script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Luke Tonin",
+      "url": "127.0.0.1/4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="https://awaywithideas.com/feed.xml" type="application/atom+xml" rel="alternate" title="Away with ideas Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/main.css">
+<link rel="stylesheet" href="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/all.min.css" as="style" onload="this.onload=null;this.rel=&#39;stylesheet&#39;">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+<link rel="apple-touch-icon" sizes="180x180" href="https://awaywithideas.com/assets/images/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://awaywithideas.com/assets/images/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://awaywithideas.com/assets/images/favicon/favicon-16x16.png">
+<link rel="manifest" href="https://awaywithideas.com/assets/images/favicon/site.webmanifest">
+<link rel="mask-icon" href="https://awaywithideas.com/assets/images/favicon/safari-pinned-tab.svg" color="#5bbad5">
+<link rel="shortcut icon" href="https://awaywithideas.com/assets/images/favicon/favicon.ico">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="msapplication-config" content="/assets/images/favicon/browserconfig.xml">
+<meta name="theme-color" content="#ffffff">
+
+<!-- end custom head snippets -->
+
+  <style id="fit-vids-style">.fluid-width-video-wrapper{width:100%;position:relative;padding:0;}.fluid-width-video-wrapper iframe,.fluid-width-video-wrapper object,.fluid-width-video-wrapper embed {position:absolute;top:0;left:0;width:100%;height:100%;}</style><style type="text/css">
+@import 'github-markdown-css';
+.markdown-body {
+  text-size-adjust: 100%;
+  color: var(--color-fg-default);
+  background-color: var(--color-canvas-default);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial,
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+  /* font-size: 16px; */
+  line-height: 1.5;
+  overflow-wrap: break-word;
+  margin: 0px;
+  font-size: 14px;
+  text-align: left;
+}
+
+/* 暗黑模式样式 */
+@media (prefers-color-scheme: dark) {
+.markdown-container {
+    background-color: #1e1e1e;
+    color: #ddd;
+}
+.markdown-body {
+    /* Add additional styles for dark mode if needed */
+    color-scheme: light;
+    --color-prettylights-syntax-comment: #6e7781;
+    --color-prettylights-syntax-constant: #0550ae;
+    --color-prettylights-syntax-entity: #8250df;
+    --color-prettylights-syntax-storage-modifier-import: #24292f;
+    --color-prettylights-syntax-entity-tag: #116329;
+    --color-prettylights-syntax-keyword: #cf222e;
+    --color-prettylights-syntax-string: #0a3069;
+    --color-prettylights-syntax-variable: #953800;
+    --color-prettylights-syntax-brackethighlighter-unmatched: #82071e;
+    --color-prettylights-syntax-invalid-illegal-text: #f6f8fa;
+    --color-prettylights-syntax-invalid-illegal-bg: #82071e;
+    --color-prettylights-syntax-carriage-return-text: #f6f8fa;
+    --color-prettylights-syntax-carriage-return-bg: #cf222e;
+    --color-prettylights-syntax-string-regexp: #116329;
+    --color-prettylights-syntax-markup-list: #3b2300;
+    --color-prettylights-syntax-markup-heading: #0550ae;
+    --color-prettylights-syntax-markup-italic: #24292f;
+    --color-prettylights-syntax-markup-bold: #24292f;
+    --color-prettylights-syntax-markup-deleted-text: #82071e;
+    --color-prettylights-syntax-markup-deleted-bg: #ffebe9;
+    --color-prettylights-syntax-markup-inserted-text: #116329;
+    --color-prettylights-syntax-markup-inserted-bg: #dafbe1;
+    --color-prettylights-syntax-markup-changed-text: #953800;
+    --color-prettylights-syntax-markup-changed-bg: #ffd8b5;
+    --color-prettylights-syntax-markup-ignored-text: #eaeef2;
+    --color-prettylights-syntax-markup-ignored-bg: #0550ae;
+    --color-prettylights-syntax-meta-diff-range: #8250df;
+    --color-prettylights-syntax-brackethighlighter-angle: #57606a;
+    --color-prettylights-syntax-sublimelinter-gutter-mark: #8c959f;
+    --color-prettylights-syntax-constant-other-reference-link: #0a3069;
+    --color-fg-default: #24292f;
+    --color-fg-muted: #57606a;
+    --color-fg-subtle: #6e7781;
+    --color-canvas-default: #ffffff;
+    --color-canvas-subtle: #f6f8fa;
+    --color-border-default: #d0d7de;
+    --color-border-muted: hsla(210, 18%, 87%, 1);
+    --color-neutral-muted: rgba(175, 184, 193, 0.2);
+    --color-accent-fg: #0969da;
+    --color-accent-emphasis: #0969da;
+    --color-attention-subtle: #fff8c5;
+    --color-danger-fg: #cf222e;
+}
+}
+</style><style type="text/css">@charset "UTF-8";
+.ng-icon[data-v-44d23264] {
+  position: fixed;
+  cursor: grab;
+  right: 0px;
+  top: 100px;
+  z-index: 99999;
+  will-change: transform;
+  transform: translateZ(0);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ng-icon-center[data-v-44d23264] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ng-icon-logo[data-v-44d23264] {
+  border-radius: 20px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.2);
+  right: 0px;
+  top: 0px;
+  width: 39px;
+  height: 39px;
+  opacity: 1;
+  text-align: left;
+}
+.ng-icon-logo .ng-icon-svg[data-v-44d23264] {
+  margin: 6px 0 0 6px;
+}
+.ng-icon-radius[data-v-44d23264] {
+  border-radius: 20px;
+}
+.ng-icon-notegpt[data-v-44d23264] {
+  width: 63px;
+  height: 20px;
+  border-radius: 12px;
+  background-color: rgb(46, 131, 251);
+  margin-top: 4px;
+}
+.ng-icon-notegpt .ng-icon-notegpt-font[data-v-44d23264] {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: 0em;
+  font-feature-settings: "kern" on;
+  color: #ffffff;
+}
+.ng-close-button[data-v-44d23264] {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  cursor: pointer;
+  color: rgb(165, 165, 165);
+  font-size: 14px;
+  z-index: 2005;
+}
+.ng-web-content[data-v-44d23264] {
+  position: fixed;
+  right: 12px;
+  top: 0px;
+  z-index: 2000;
+  width: 402px;
+  height: calc(100vh - 24px);
+  margin-top: 12px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.16);
+  background-color: rgb(246, 250, 255);
+}
+.ng-web-content .ng-summary[data-v-44d23264] {
+  position: relative;
+}
+.ng-web-content .ng-summary .ng-summary-content-header[data-v-44d23264] {
+  margin-top: 14px;
+  margin-bottom: 14px;
+  height: 29px;
+  display: flex;
+  flex-direction: row;
+}
+.ng-web-content .ng-summary .ng-summary-content-header .ng-left[data-v-44d23264] {
+  margin-left: 6px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+}
+.ng-web-content .ng-summary .ng-summary-content-header .ng-left .ng-brand[data-v-44d23264] {
+  margin-left: 8px;
+  font-family: Source Han Sans;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: 0em;
+  font-feature-settings: "kern" on;
+  color: #3d3d3d;
+}
+.ng-web-content .ng-summary .ng-summary-content-header .ng-right[data-v-44d23264] {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+.ng-web-content .ng-summary .ng-summary-content-header .ng-right .ng-feedback[data-v-44d23264] {
+  margin-right: 14px;
+  cursor: pointer;
+}
+.ng-web-content .ng-summary .ng-summary-content-header .ng-right .ng-close[data-v-44d23264] {
+  margin-right: 18px;
+  cursor: pointer;
+}
+.ng-web-content .ng-summary .ng-summary-content-body[data-v-44d23264] {
+  background-color: rgb(255, 255, 255);
+  height: calc(100vh - 95px);
+  /* 针对WebKit内核浏览器的自定义滚动条样式 */
+}
+.ng-web-content .ng-summary .ng-summary-content-body .ng-toolbar[data-v-44d23264] {
+  height: 46px;
+  margin-left: 18px;
+  margin-right: 18px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.ng-web-content .ng-summary .ng-summary-content-body .ng-toolbar .ng-toolbar-right[data-v-44d23264] {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+}
+.ng-web-content .ng-summary .ng-summary-content-body .ng-toolbar .ng-toolbar-right .ng-toolbar-refresh[data-v-44d23264] {
+  cursor: pointer;
+}
+.ng-web-content .ng-summary .ng-summary-content-body .ng-toolbar .ng-toolbar-right .ng-toolbar-copy[data-v-44d23264] {
+  margin-left: 14px;
+  cursor: pointer;
+}
+.ng-web-content .ng-summary .ng-summary-content-body .ng-summary-markdown[data-v-44d23264] {
+  height: calc(100% - 75px);
+  margin-left: 18px;
+  margin-top: 24px;
+  margin-right: 4px;
+}
+.ng-web-content .ng-summary .ng-summary-content-body .scroll-div[data-v-44d23264] {
+  overflow-y: auto; /* 使内容可滚动 */
+  scrollbar-gutter: stable; /* 保持内容不移动 */
+}
+.ng-web-content .ng-summary .ng-summary-content-body .scroll-div[data-v-44d23264]::-webkit-scrollbar {
+  background: transparent;
+  width: 8px;
+  border-radius: 4px;
+}
+.ng-web-content .ng-summary .ng-summary-content-body .scroll-div[data-v-44d23264]:hover::-webkit-scrollbar {
+  background: #c1c1c1;
+}
+.ng-web-content .ng-summary .ng-summary-margin-left-right-width[data-v-44d23264] {
+  margin-left: 10px;
+  margin-right: 10px;
+  width: 382px;
+}
+.ng-web-content .ng-explain[data-v-44d23264] {
+  position: relative;
+}
+.ng-web-content .ng-explain .ng-explain-content-header[data-v-44d23264] {
+  margin-top: 14px;
+  margin-bottom: 14px;
+  height: 29px;
+  display: flex;
+  flex-direction: row;
+}
+.ng-web-content .ng-explain .ng-explain-content-header .ng-left[data-v-44d23264] {
+  margin-left: 6px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+}
+.ng-web-content .ng-explain .ng-explain-content-header .ng-left .ng-brand[data-v-44d23264] {
+  margin-left: 8px;
+  font-family: Source Han Sans;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: 0em;
+  font-feature-settings: "kern" on;
+  color: #3d3d3d;
+}
+.ng-web-content .ng-explain .ng-explain-content-header .ng-right[data-v-44d23264] {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+.ng-web-content .ng-explain .ng-explain-content-header .ng-right .ng-feedback[data-v-44d23264] {
+  margin-right: 14px;
+  cursor: pointer;
+}
+.ng-web-content .ng-explain .ng-explain-content-header .ng-right .ng-close[data-v-44d23264] {
+  margin-right: 18px;
+  cursor: pointer;
+}
+.ng-web-content .ng-explain .ng-explain-content-body[data-v-44d23264] {
+  background-color: rgb(255, 255, 255);
+  height: calc(100vh - 95px);
+  padding-top: 2px;
+}
+.ng-web-content .ng-explain .ng-explain-content-body .ng-toolbar[data-v-44d23264] {
+  height: 46px;
+  margin-left: 18px;
+  margin-right: 18px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.ng-web-content .ng-explain .ng-explain-content-body .ng-toolbar .ng-toolbar-right[data-v-44d23264] {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+.ng-web-content .ng-explain .ng-explain-content-body .ng-toolbar .ng-toolbar-right .ng-toolbar-refresh[data-v-44d23264] {
+  cursor: pointer;
+}
+.ng-web-content .ng-explain .ng-explain-content-body .ng-toolbar .ng-toolbar-right .ng-toolbar-copy[data-v-44d23264] {
+  cursor: pointer;
+  margin-left: 14px;
+}
+.ng-web-content .ng-explain .ng-explain-content-body .ng-explain-text[data-v-44d23264] {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 34px;
+  margin-top: 4px;
+}
+.ng-web-content .ng-explain .ng-explain-content-body .ng-explain-text .ng-explain-text-box[data-v-44d23264] {
+  padding: 10px;
+}
+.ng-web-content .ng-explain .ng-explain-content-body .ng-explain-text .ng-explain-line-title[data-v-44d23264] {
+  display: flex;
+  align-items: center;
+  color: rgba(33, 36, 39, 0.502);
+  font-size: 12px;
+}
+.ng-web-content .ng-explain .ng-explain-content-body .ng-explain-text .ng-explain-line-title .ng-explain-line-title-right[data-v-44d23264] {
+  margin-left: auto;
+  cursor: pointer;
+  margin-right: 14px;
+}
+.ng-web-content .ng-explain .ng-explain-content-body .ng-explain-text .ng-explain-line-content[data-v-44d23264] {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #3d3d3d;
+}
+.ng-web-content .ng-explain .ng-explain-content-body .ng-explain-markdown[data-v-44d23264] {
+  height: calc(91% - 160px);
+  overflow-y: auto;
+}
+.ng-web-content .ng-explain .ng-explain-content-body .ng-explain-empty[data-v-44d23264] {
+  display: none;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  height: 60%;
+  border: none;
+  outline: none;
+}
+.ng-web-content .ng-explain .ng-explain-content-body .ng-explain-empty .ng-explain-empty-page-summarize[data-v-44d23264] {
+  margin-top: 46px;
+}
+.ng-web-content .ng-explain .ng-explain-content-body .ng-explain-empty .ng-explain-empty-btn[data-v-44d23264] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2e83fb;
+  border-radius: 8px;
+  width: 200px;
+  height: 40px;
+  color: #ffffff;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+}
+.ng-web-content .ng-explain .ng-explain-content-body .ng-explain-empty .ng-explain-empty-btn[data-v-44d23264]:focus-visible {
+  border: none;
+  outline: none;
+}
+.ng-web-content .ng-explain .ng-explain-content-body .ng-explain-empty .ng-explain-empty-btn[data-v-44d23264]:focus {
+  border: none;
+  outline: none;
+}
+.ng-web-content .ng-explain .ng-explain-content-body .ng-explain-empty .ng-explain-empty-btn .btn-txt[data-v-44d23264] {
+  margin-left: 9px;
+}
+.ng-web-content .ng-explain .ng-explain-margin-left-right-width[data-v-44d23264] {
+  margin-left: 10px;
+  margin-right: 10px;
+  width: 382px;
+}
+.ng-border-radius-8[data-v-44d23264] {
+  border-radius: 8px;
+}
+.ng-border-radius-6[data-v-44d23264] {
+  border-radius: 6px;
+}
+.separator-panel[data-v-44d23264] {
+  border: 1px solid #f6faff;
+  width: 382px;
+}
+.my-language[data-v-44d23264] {
+  width: 113px;
+}
+.ng-explain-margin-left-right-10[data-v-44d23264] {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.ng-explain-margin-left-right-18[data-v-44d23264] {
+  margin-left: 18px;
+  margin-right: 18px;
+}
+.clamp-text[data-v-44d23264] {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+/* 仅对含有 clamp-text 类的 div 应用 line-clamp */
+.clamp-text[data-v-44d23264] {
+  -webkit-line-clamp: 3;
+}
+
+/* 添加省略号样式 */
+.clamp-text[data-v-44d23264]::after {
+  content: "...";
+  display: inline-block;
+  margin-left: 2px; /* 可根据需要调整省略号与文本之间的距离 */
+}
+.ng-explain-text-box[data-v-44d23264] {
+  box-sizing: border-box;
+  border: 1px solid #eaeaea;
+}
+.ng-flex-center[data-v-44d23264] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.announcement-dialog .announcement-dialog-banner[data-v-44d23264] {
+  position: relative;
+  width: 100%;
+  height: 165px;
+  background: linear-gradient(to right, #1065df, #2c83fd);
+  overflow: hidden;
+  border-radius: 10px 10px 0 0;
+}
+.announcement-dialog .announcement-dialog-banner .announcementBanner[data-v-44d23264] {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 133px;
+  height: 133px;
+  background-color: rgb(0, 57, 138);
+  border-radius: 100%;
+  z-index: 2001;
+}
+.announcement-dialog .announcement-dialog-banner .announcementBanner .announcementBanner-img[data-v-44d23264] {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 150px;
+  height: 133px;
+  z-index: 2002;
+}
+.announcement-dialog .announcement-dialog-banner .announcementBanner-svg[data-v-44d23264] {
+  transform: scale(1.05);
+  z-index: 2000;
+}
+.announcement-dialog .announcement-dialog-content[data-v-44d23264] {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.announcement-dialog .announcement-dialog-content .adc-title[data-v-44d23264] {
+  color: rgb(255, 130, 0);
+  font-size: 16px;
+}
+.announcement-dialog .announcement-dialog-content .adc-line[data-v-44d23264] {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: 12px;
+  font-size: 14px;
+}
+.announcement-dialog .announcement-dialog-content .adc-line .adc-line-text[data-v-44d23264] {
+  flex: 1;
+  margin-left: 16px;
+}
+.announcement-dialog .announcement-dialog-content .line2[data-v-44d23264] {
+  margin-top: 12px;
+  /* color: rgba(142, 142, 142, 1); */
+  font-size: 14px;
+}
+.announcement-dialog .announcement-dialog-content .contact-us[data-v-44d23264] {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 220px;
+  height: 33px;
+  border-radius: 8px;
+  background-color: rgb(46, 131, 251);
+  margin-top: 12px;
+  cursor: pointer;
+}
+.announcement-dialog .announcement-dialog-content .contact-us .contact-us-div[data-v-44d23264] {
+  margin-left: 10px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+}
+.announcement-dialog .quotas-dialog-content[data-v-44d23264] {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+.announcement-dialog .quotas-dialog-content .adc-title[data-v-44d23264] {
+  color: rgb(255, 130, 0);
+  font-size: 14px;
+}
+.announcement-dialog .quotas-dialog-content .adc-title-text[data-v-44d23264] {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+.announcement-dialog .quotas-dialog-content .adc-line[data-v-44d23264] {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  font-size: 12px;
+  margin-top: 12px;
+}
+.announcement-dialog .quotas-dialog-content .adc-line .adc-line-text[data-v-44d23264] {
+  flex: 1;
+  margin-left: 8px;
+  line-height: 16px;
+}
+.announcement-dialog .quotas-dialog-content .line2[data-v-44d23264] {
+  margin-top: 12px;
+  /* color: rgba(142, 142, 142, 1); */
+  font-size: 14px;
+}
+.announcement-dialog .quotas-dialog-content .contact-us[data-v-44d23264] {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 220px;
+  height: 33px;
+  border-radius: 8px;
+  background: linear-gradient(94.66deg, rgb(46, 131, 251) 4.37%, rgb(182, 63, 255) 95.78%);
+  margin: 12px auto 0 auto;
+  cursor: pointer;
+}
+.announcement-dialog .quotas-dialog-content .contact-us .contact-us-div[data-v-44d23264] {
+  margin-left: 10px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+}
+.announcement-dialog .quotas-dialog-content .contact-us-background[data-v-44d23264] {
+  background: rgb(255, 130, 0);
+}
+
+/*# sourceMappingURL=WebSummary.vue.map */</style><style type="text/css">[data-v-4f28e988] .el-popover {
+  padding: 2px 5px;
+  top: 30px;
+  background-color: rgb(48, 49, 51);
+  color: rgb(255, 255, 255);
+  font-size: 12px;
+  min-width: 125px;
+  border-color: rgb(48, 49, 51);
+  text-align: center;
+}
+#ng-popup[data-v-4f28e988] {
+  z-index: 1000;
+  position: fixed;
+  display: none;
+  width: 138px;
+  line-height: 28px;
+  border-radius: 8px;
+  background-color: rgb(255, 255, 255);
+  text-align: center;
+  border: 1px solid rgb(25, 132, 252);
+}
+#ng-popup .ng-popup-content[data-v-4f28e988] {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+#ng-popup .ng-popup-content .ng-box1[data-v-4f28e988] {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  cursor: pointer;
+}
+#ng-popup .ng-popup-content .ng-box1 .ng-text[data-v-4f28e988] {
+  font-size: 14px;
+  color: #3274FF;
+  margin-left: 3px;
+}
+#ng-popup .ng-popup-content .ng-box1 .ng-line3[data-v-4f28e988] {
+  width: 1px;
+  height: 20px;
+  background: #BBBBBB;
+  margin-left: 12px;
+}
+
+/*# sourceMappingURL=WebExplain.vue.map */</style></head>
+
+  <body class="layout--single wide">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="https://awaywithideas.com/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="https://awaywithideas.com/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="https://awaywithideas.com/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+          <a class="site-logo" href="https://awaywithideas.com/"><img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/icon_only.svg" alt="Away with ideas"></a>
+        
+        <a class="site-title" href="https://awaywithideas.com/">
+          Away with ideas
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="https://awaywithideas.com/posts/">Posts</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://awaywithideas.com/about-me/">About Me</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://awaywithideas.com/categories/">Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://awaywithideas.com/tags/">Tags</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button" count="0">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope="" itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/bio_photo.jpg" alt="Luke Tonin" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Luke Tonin</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Data and artificial intelligence enthusiast.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope="" itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Oxford, UK</span>
+        </li>
+      
+
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/LukeTonin" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+          
+            <li><a href="https://www.linkedin.com/in/luketonin/" rel="nofollow noopener noreferrer"><i class="fab fa-linkedin" aria-hidden="true"></i><span class="label">Linkedin</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope="" itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="A simple example of semantic segmentation with tensorflow keras">
+    <meta itemprop="description" content="This post is about semantic segmentation. This is the task of assigning a label to each pixel of an images. It can be seen as an image classification task, except that instead of classifying the whole image, you’re classifying each pixel individually. From this perspective, semantic segmentation is actually very simple. Let’s see how we can build a model using Keras to perform semantic segmentation.">
+    <meta itemprop="datePublished" content="2020-10-27T22:33:49+00:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">A simple example of semantic segmentation with tensorflow keras
+</h1>
+          
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>This post is about semantic segmentation. This is the task of assigning a label to each pixel of an images. It can be seen as an image classification task, except that instead of classifying the whole image, you’re classifying each pixel individually. From this perspective, semantic segmentation is actually very simple. Let’s see how we can build a model using Keras to perform semantic segmentation.</p>
+
+<p>This tutorial is posted on <a href="https://awaywithideas.com/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/127.0.0.1/4000/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/">my blog</a> and in my <a href="https://github.com/LukeTonin/simple-deep-learning/blob/main/semantic_segmentation.ipynb">github repository</a> where you can find the jupyter notebook version of this post.</p>
+
+<p>We’re going to use MNIST extended, a toy dataset I created that’s great for exploring and playing around with deep learning models. In this post, we won’t look into how the data is generated, for more information on that, you can checkout my post : <a href="https://awaywithideas.com/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/127.0.0.1/4000/mnist-extended-a-dataset-for-semantic-segmentation-and-object-detection/">MNIST Extended: A simple dataset for image segmentation and object localisation</a></p>
+
+<p>In this post I assume a basic understanding of deep learning computer vision notions such as convolutional layers, pooling layers, loss functions, tensorflow/keras etc.</p>
+
+<h2 id="import-packages">Import packages<a class="header-link" href="https://awaywithideas.com/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/#import-packages" title="Permalink"><span class="sr-only">Permalink</span><i class="fas fa-link"></i></a></h2>
+
+<p>Let’s start by importing a few packages. I’ve printed the tensorflow version we’re importing. We’ll only be using very simple features of the package, so any version of tensorflow 2 should work.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">__version__</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="k">print</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">__version__</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="k">print</span><span class="p">(</span><span class="n">matplotlib</span><span class="p">.</span><span class="n">__version__</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>2.0.0
+1.19.1
+3.3.1
+</code></pre></div></div>
+
+<h2 id="semantic-segmentation-dataset">Semantic segmentation dataset<a class="header-link" href="https://awaywithideas.com/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/#semantic-segmentation-dataset" title="Permalink"><span class="sr-only">Permalink</span><i class="fas fa-link"></i></a></h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">simple_deep_learning.mnist_extended.semantic_segmentation</span> <span class="kn">import</span> <span class="n">create_semantic_segmentation_dataset</span>
+</code></pre></div></div>
+
+<p>If you’re running the code yourself, you might have a few dependencies missing. You can either install the missing dependencies yourself, or you can pip install the requirements file from the <a href="https://github.com/LukeTonin/simple-deep-learning">github repository</a>. It’s also possible to install the simple_deep_learning package itself (which will also install the dependencies). Checkout the README.md in the github repository for installation instructions.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span> <span class="o">=</span> <span class="n">create_semantic_segmentation_dataset</span><span class="p">(</span><span class="n">num_train_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+                                                                        <span class="n">num_test_samples</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+                                                                        <span class="n">image_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span>
+                                                                        <span class="n">max_num_digits_per_image</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                                                                        <span class="n">num_classes</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Let’s take a quick look at what this input and output looks like.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="nn">simple_deep_learning.mnist_extended.semantic_segmentation</span> <span class="kn">import</span> <span class="n">display_grayscale_array</span><span class="p">,</span> <span class="n">plot_class_masks</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">train_x</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">train_y</span><span class="p">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">train_x</span><span class="p">))</span>
+
+<span class="n">display_grayscale_array</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">train_x</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+<span class="n">plot_class_masks</span><span class="p">(</span><span class="n">train_y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(1000, 60, 60, 1) (1000, 60, 60, 3)
+</code></pre></div></div>
+<figure><img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/semantic_segmentation_8_1.png" alt="input image example"> <figcaption class="align-center">Input image example</figcaption></figure>
+<figure><img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/semantic_segmentation_8_2.png" alt="target example"><figcaption class="align-center">Target example</figcaption></figure>
+
+<p>I’ve printed the shapes of the train inputs and targets. As expected the input is a grayscale image. The output is slightly strange however, it’s essentially a grayscale image for each class we have in our semantic segmentation task. Here we chose num_classes=3 (i.e digits 0, 1 and 2) so our target has a last dimension of length 3. If this is strange to you, I strongly recommend you check out my post on the <a href="https://awaywithideas.com/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/%E2%80%A6">MNIST extended</a> where I explain this semantic segmentation dataset in more detail.</p>
+
+<h2 id="semantic-segmentation-modelling">Semantic segmentation modelling<a class="header-link" href="https://awaywithideas.com/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/#semantic-segmentation-modelling" title="Permalink"><span class="sr-only">Permalink</span><i class="fas fa-link"></i></a></h2>
+
+<h3 id="model-architecture">Model architecture<a class="header-link" href="https://awaywithideas.com/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/#model-architecture" title="Permalink"><span class="sr-only">Permalink</span><i class="fas fa-link"></i></a></h3>
+
+<p>This post is part of the simple deep learning series. My objective here is to achieve reasonably good results with a simple model. This helps understand the core concepts related to a particular deep learning task. It’s then very possible to gradually include components from state of the art models to achieve better results or a more efficient model.</p>
+
+<p>Before I give you the simplest model architecture for semantic segmentation, I’d like you to spend a bit of time trying to imagine what that would be.</p>
+
+<p>Need help? I’ll give you a hint. For semantic segmentation, the width and height of our output should be the same as our input (semantic segmentation is the task of classifying each pixel individually) and the number of channels should be the number of classes to predict.</p>
+
+<p>The simplest model that achieves that is simply a stack of 2D convolutional layers! It’s that simple. If you’re familiar with image classification, you might remember that you need pooling to gradually reduce the input size on top of which you add a dense layer. For semantic segmentation this isn’t even needed because your output is the same size as the input! This very simple model of stacking convolutional layers is called a Fully Convolutional Network (FCN).</p>
+
+<p>Let’s see whether this is good enough. We’ll be using tf.keras’s <a href="https://keras.io/api/models/sequential/">sequential API</a> to create the model.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras</span> <span class="kn">import</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">layers</span><span class="p">,</span> <span class="n">models</span>
+
+<span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">backend</span><span class="p">.</span><span class="n">clear_session</span><span class="p">()</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">Sequential</span><span class="p">()</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="n">train_x</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="n">train_y</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'sigmoid'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>We’re not going to bother ourselves with fancy activations, let’s just go with relu for the intermediate layers and sigmoid for the last layer. I chose sigmoid for the output because it produces and activation between 0 and 1 (i.e a probability) and our classes are non exclusive, otherwise we could use a softmax along the channels axis.</p>
+
+<p>“Same” padding is perfectly appropriate here, we want our output to be the same size as our input and same padding does exactly that.</p>
+
+<p>I’m not going to claim some sort of magical intuition for the number of convolutional layers or the number of filters. When experimenting for this article, I started with an even smaller model, but it wasn’t managing to learn anything. So I gradually increased the size until it started learning.</p>
+
+<p>I’ve got a deep learning hint for you. If you’re ever struggling to find the correct size for your models, my recommendation is to start with something small. If that small model isn’t managing to fit the training dataset, then gradually increase the size of your model until you manage to fit the training set. Unless you’ve made a particularly bad architectural decision, you should always be able to fit your training dataset, if not, your model is probably too small.</p>
+
+<p>Let’s look at how many parameters our model has.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model</span><span class="p">.</span><span class="n">summary</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv2d (Conv2D)              (None, 60, 60, 16)        160       
+_________________________________________________________________
+conv2d_1 (Conv2D)            (None, 60, 60, 32)        4640      
+_________________________________________________________________
+conv2d_2 (Conv2D)            (None, 60, 60, 32)        9248      
+_________________________________________________________________
+conv2d_3 (Conv2D)            (None, 60, 60, 32)        9248      
+_________________________________________________________________
+conv2d_4 (Conv2D)            (None, 60, 60, 32)        9248      
+_________________________________________________________________
+conv2d_5 (Conv2D)            (None, 60, 60, 32)        9248      
+_________________________________________________________________
+conv2d_6 (Conv2D)            (None, 60, 60, 32)        9248      
+_________________________________________________________________
+conv2d_7 (Conv2D)            (None, 60, 60, 32)        9248      
+_________________________________________________________________
+conv2d_8 (Conv2D)            (None, 60, 60, 32)        9248      
+_________________________________________________________________
+conv2d_9 (Conv2D)            (None, 60, 60, 16)        4624      
+_________________________________________________________________
+conv2d_10 (Conv2D)           (None, 60, 60, 3)         435       
+=================================================================
+Total params: 74,595
+Trainable params: 74,595
+Non-trainable params: 0
+_________________________________________________________________
+</code></pre></div></div>
+
+<p>About 75000 trainable parameters. For reference, VGG16, a well known model for image feature extraction contains 138 million parameters. In comparison, our model is tiny. That’s good, because it means we should be able to train it quickly on CPU.</p>
+
+<p>Let’s choose our training parameters. Adam is my go to gradient descent based optimisation algorithm, I don’t want to go into the details of how adam works but it’s often a good default that I and <a href="https://www.youtube.com/watch?v=JXQT_vxqwIs">others</a> recommend.</p>
+
+<p>For the loss function, I chose <a href="https://www.tensorflow.org/api_docs/python/tf/keras/losses/BinaryCrossentropy">binary crossentropy</a>. This is a good loss when your classes are non exclusive which is the case here. If your labels are exclusive, you might want to look at <a href="https://www.tensorflow.org/api_docs/python/tf/keras/losses/CategoricalCrossentropy">categorical crossentropy</a> or something else.</p>
+
+<p>Keras allows you to add metrics to be calculated while the model is training. These don’t influence the training process but are useful to follow training performance. Accuracy is often the default, but here accuracy isn’t very meaningful. Our classes are so imbalanced (i.e a lot more pixels are background than they are digits) that even a model that always predicts 0 will have a great accuracy. For that reason I added <a href="https://developers.google.com/machine-learning/crash-course/classification/precision-and-recall">recall and precision</a>, those metrics are a lot more useful to evaluate performance, especially in the case of a class imbalance.<br>
+I was slightly worried that the class imbalance would prevent the model from learning (I think it does a bit at the beginning) but eventually the model learns.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model</span><span class="p">.</span><span class="nb">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s">'adam'</span><span class="p">,</span>
+              <span class="n">loss</span><span class="o">=</span><span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">losses</span><span class="p">.</span><span class="n">BinaryCrossentropy</span><span class="p">(),</span>
+              <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">metrics</span><span class="p">.</span><span class="n">BinaryAccuracy</span><span class="p">(),</span>
+                       <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">metrics</span><span class="p">.</span><span class="n">Recall</span><span class="p">(),</span>
+                       <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">metrics</span><span class="p">.</span><span class="n">Precision</span><span class="p">()])</span>
+</code></pre></div></div>
+
+<h3 id="train-and-evaluate">Train and evaluate<a class="header-link" href="https://awaywithideas.com/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/#train-and-evaluate" title="Permalink"><span class="sr-only">Permalink</span><i class="fas fa-link"></i></a></h3>
+
+<p>Let’s train the model for 20 epochs. This takes about 11 minutes on my 2017 laptop with CPU only. If you have GPU available, then use it. Your model will train a lot faster (approx 10x speed depending on your GPU/CPU). If you’re familiar with <a href="https://colab.research.google.com/">Google Colab</a> then then you can also run the notebook version of the tutorial on there and utilise the free GPU/TPU available on the platform (you will need to copy or install the simple_deep_learning package to generate the dataset).</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">history</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                    <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Train on 1000 samples, validate on 200 samples
+Epoch 1/20
+1000/1000 [==============================] - 39s 39ms/sample - loss: 0.2830 - binary_accuracy: 0.9458 - recall: 0.0266 - precision: 0.0711 - val_loss: 0.0752 - val_binary_accuracy: 0.9601 - val_recall: 0.0000e+00 - val_precision: 0.0000e+00
+Epoch 2/20
+1000/1000 [==============================] - 38s 38ms/sample - loss: 0.0709 - binary_accuracy: 0.9598 - recall: 0.0000e+00 - precision: 0.0000e+00 - val_loss: 0.0641 - val_binary_accuracy: 0.9601 - val_recall: 0.0000e+00 - val_precision: 0.0000e+00
+Epoch 3/20
+1000/1000 [==============================] - 36s 36ms/sample - loss: 0.0595 - binary_accuracy: 0.9590 - recall: 0.0381 - precision: 0.6183 - val_loss: 0.0568 - val_binary_accuracy: 0.9580 - val_recall: 0.0781 - val_precision: 0.5779
+Epoch 4/20
+1000/1000 [==============================] - 38s 38ms/sample - loss: 0.0548 - binary_accuracy: 0.9575 - recall: 0.1105 - precision: 0.6330 - val_loss: 0.0527 - val_binary_accuracy: 0.9551 - val_recall: 0.2162 - val_precision: 0.6086
+Epoch 5/20
+1000/1000 [==============================] - 38s 38ms/sample - loss: 0.0508 - binary_accuracy: 0.9555 - recall: 0.2354 - precision: 0.6553 - val_loss: 0.0486 - val_binary_accuracy: 0.9558 - val_recall: 0.2681 - val_precision: 0.6815
+Epoch 6/20
+1000/1000 [==============================] - 37s 37ms/sample - loss: 0.0469 - binary_accuracy: 0.9554 - recall: 0.3294 - precision: 0.7167 - val_loss: 0.0447 - val_binary_accuracy: 0.9545 - val_recall: 0.3860 - val_precision: 0.7028
+Epoch 7/20
+1000/1000 [==============================] - 39s 39ms/sample - loss: 0.0429 - binary_accuracy: 0.9559 - recall: 0.4088 - precision: 0.7670 - val_loss: 0.0404 - val_binary_accuracy: 0.9568 - val_recall: 0.4336 - val_precision: 0.7997
+Epoch 8/20
+1000/1000 [==============================] - 45s 45ms/sample - loss: 0.0408 - binary_accuracy: 0.9564 - recall: 0.4440 - precision: 0.7983 - val_loss: 0.0384 - val_binary_accuracy: 0.9569 - val_recall: 0.4866 - val_precision: 0.8160
+Epoch 9/20
+1000/1000 [==============================] - 46s 46ms/sample - loss: 0.0375 - binary_accuracy: 0.9572 - recall: 0.4902 - precision: 0.8368 - val_loss: 0.0371 - val_binary_accuracy: 0.9581 - val_recall: 0.4432 - val_precision: 0.8508
+Epoch 10/20
+1000/1000 [==============================] - 39s 39ms/sample - loss: 0.0352 - binary_accuracy: 0.9577 - recall: 0.5175 - precision: 0.8581 - val_loss: 0.0364 - val_binary_accuracy: 0.9568 - val_recall: 0.5367 - val_precision: 0.8272
+Epoch 11/20
+1000/1000 [==============================] - 42s 42ms/sample - loss: 0.0347 - binary_accuracy: 0.9578 - recall: 0.5271 - precision: 0.8666 - val_loss: 0.0345 - val_binary_accuracy: 0.9574 - val_recall: 0.5920 - val_precision: 0.8554
+Epoch 12/20
+1000/1000 [==============================] - 43s 43ms/sample - loss: 0.0334 - binary_accuracy: 0.9582 - recall: 0.5425 - precision: 0.8822 - val_loss: 0.0332 - val_binary_accuracy: 0.9581 - val_recall: 0.5709 - val_precision: 0.8741
+Epoch 13/20
+1000/1000 [==============================] - 40s 40ms/sample - loss: 0.0323 - binary_accuracy: 0.9584 - recall: 0.5491 - precision: 0.8882 - val_loss: 0.0351 - val_binary_accuracy: 0.9566 - val_recall: 0.6564 - val_precision: 0.8446
+Epoch 14/20
+1000/1000 [==============================] - 42s 42ms/sample - loss: 0.0320 - binary_accuracy: 0.9585 - recall: 0.5577 - precision: 0.8914 - val_loss: 0.0316 - val_binary_accuracy: 0.9581 - val_recall: 0.5888 - val_precision: 0.8752
+Epoch 15/20
+1000/1000 [==============================] - 44s 44ms/sample - loss: 0.0301 - binary_accuracy: 0.9589 - recall: 0.5743 - precision: 0.9084 - val_loss: 0.0329 - val_binary_accuracy: 0.9578 - val_recall: 0.6012 - val_precision: 0.8701
+Epoch 16/20
+1000/1000 [==============================] - 41s 41ms/sample - loss: 0.0301 - binary_accuracy: 0.9588 - recall: 0.5755 - precision: 0.9048 - val_loss: 0.0298 - val_binary_accuracy: 0.9588 - val_recall: 0.6040 - val_precision: 0.9025
+Epoch 17/20
+1000/1000 [==============================] - 38s 38ms/sample - loss: 0.0290 - binary_accuracy: 0.9590 - recall: 0.5847 - precision: 0.9143 - val_loss: 0.0295 - val_binary_accuracy: 0.9586 - val_recall: 0.6410 - val_precision: 0.8998
+Epoch 18/20
+1000/1000 [==============================] - 37s 37ms/sample - loss: 0.0280 - binary_accuracy: 0.9592 - recall: 0.5929 - precision: 0.9206 - val_loss: 0.0301 - val_binary_accuracy: 0.9586 - val_recall: 0.6418 - val_precision: 0.9001
+Epoch 19/20
+1000/1000 [==============================] - 37s 37ms/sample - loss: 0.0277 - binary_accuracy: 0.9593 - recall: 0.5955 - precision: 0.9240 - val_loss: 0.0280 - val_binary_accuracy: 0.9590 - val_recall: 0.6358 - val_precision: 0.9098
+Epoch 20/20
+1000/1000 [==============================] - 37s 37ms/sample - loss: 0.0269 - binary_accuracy: 0.9594 - recall: 0.6037 - precision: 0.9294 - val_loss: 0.0271 - val_binary_accuracy: 0.9594 - val_recall: 0.6150 - val_precision: 0.9231
+</code></pre></div></div>
+
+<p>We’ve stopped the training before the loss plateaued, as you can see, both train and validation loss were still going down after 20 epochs which means that some extra performance might be gained from training longer. However we’re not here to get the best possible model.</p>
+
+<p>At the end of epoch 20, on the test set we have an accuracy of 95.6%, a recall of 58.7% and a precision of 90.6%. Remember, these are the metrics for each individual pixel. So the metrics don’t give us a great idea of how our segmentation actually looks. To get a better idea, let’s look at a few predictions from the test data.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">test_y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_x</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">simple_deep_learning.mnist_extended.semantic_segmentation</span> <span class="kn">import</span> <span class="n">display_segmented_image</span>
+
+<span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test_y_predicted</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'Example </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s">'</span><span class="p">)</span>
+    <span class="n">display_grayscale_array</span><span class="p">(</span><span class="n">test_x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">'Input image'</span><span class="p">)</span>
+    <span class="n">display_segmented_image</span><span class="p">(</span><span class="n">test_y_predicted</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax2</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">'Segmented image'</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">plot_class_masks</span><span class="p">(</span><span class="n">test_y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">test_y_predicted</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s">'y target and y predicted sliced along the channel axis'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Example 138
+</code></pre></div></div>
+<figure><img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/semantic_segmentation_20_1.png" alt="segmentation prediction example 1"> </figure>
+<figure><img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/semantic_segmentation_20_2.png" alt="segmentation prediction slices"></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Example 106
+</code></pre></div></div>
+<figure><img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/semantic_segmentation_20_4.png" alt="segmentation prediction 2"> </figure>
+<figure><img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/semantic_segmentation_20_5.png" alt="segmentation prediction 2 slices"></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Example 109
+</code></pre></div></div>
+<figure><img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/semantic_segmentation_20_7.png" alt="segmentation prediction 3"> </figure>
+<figure><img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/semantic_segmentation_20_8.png" alt="segmentation prediction 3 slices"></figure>
+
+<p>These randomly selected samples show that the model has at least learnt something. It does quite a good job of detecting the digits but it has some problems. By looking at a few examples, it becomes apparent that the model is far from perfect. In my opinion, this model isn’t good enough. There’s no overfitting the test dataset so we could train for longer, or increase the size of the model but we can do better than that.</p>
+
+<h3 id="improvements">Improvements<a class="header-link" href="https://awaywithideas.com/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/#improvements" title="Permalink"><span class="sr-only">Permalink</span><i class="fas fa-link"></i></a></h3>
+
+<p>We can improve our model by adding few max pooling layers. The first benefit of these pooling layers is computational efficiency. By reducing the size of the intermediate layers, our network performs fewer computations, this will speed up training a bit. However, the number of parameters remains the same because our convolutions are unchanged. The problem with adding the pooling layers is that our output will no longer have the same height and width the input image. To solve that problem we an use upsampling layers. These simple upsampling layers perform essentially the inverse of the pooling layer. A (2, 2) upsampling layer will transform a (height, width, channels) volume into a (height * 2, width * 2, channels) volume simply by duplicating each pixel 4 times. By applying the same number of upsampling layers as max pooling layers, our output is of the same height and width as the input.</p>
+
+<p>Another, more intuitive, benefit of adding the pooling layers is that it forces the network to learn a compressed representation of the input image. It’s not totally evident how this helps, but by forcing the intermediate layers to hold a volume of smaller height and width than the input, the network is forced to learn the important elements of the input image as a whole as opposed to simply passing all information through. As you’ll see, the pooling layers not only improve computational efficiency but also improve the performance of our model!</p>
+
+<p>This idea of compressing a complex input to a compact representation and using that representation to construct an output is a very common idea in deep learning, such models are often called “encoder-decoder” models. They’re not only used in computer vision, in this more <a href="https://awaywithideas.com/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/127.0.0.1/4000/keras-implementation-of-a-sequence-to-sequence-model-for-time-series-prediction-using-an-encoder-decoder-architecture/">advanced deep learning post</a>, I explore the use of encoder-decoders for time series prediction.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">backend</span><span class="p">.</span><span class="n">clear_session</span><span class="p">()</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">Sequential</span><span class="p">()</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="n">train_x</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">MaxPooling2D</span><span class="p">(</span><span class="n">pool_size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">MaxPooling2D</span><span class="p">(</span><span class="n">pool_size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">UpSampling2D</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">UpSampling2D</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="n">train_y</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">'sigmoid'</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'same'</span><span class="p">))</span>
+
+<span class="n">model</span><span class="p">.</span><span class="nb">compile</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="s">'adam'</span><span class="p">,</span>
+              <span class="n">loss</span><span class="o">=</span><span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">losses</span><span class="p">.</span><span class="n">BinaryCrossentropy</span><span class="p">(),</span>
+              <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">metrics</span><span class="p">.</span><span class="n">BinaryAccuracy</span><span class="p">(),</span>
+                       <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">metrics</span><span class="p">.</span><span class="n">Recall</span><span class="p">(),</span>
+                       <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">metrics</span><span class="p">.</span><span class="n">Precision</span><span class="p">()])</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model</span><span class="p">.</span><span class="n">summary</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv2d (Conv2D)              (None, 60, 60, 16)        160       
+_________________________________________________________________
+conv2d_1 (Conv2D)            (None, 60, 60, 32)        4640      
+_________________________________________________________________
+max_pooling2d (MaxPooling2D) (None, 30, 30, 32)        0         
+_________________________________________________________________
+conv2d_2 (Conv2D)            (None, 30, 30, 32)        9248      
+_________________________________________________________________
+conv2d_3 (Conv2D)            (None, 30, 30, 32)        9248      
+_________________________________________________________________
+max_pooling2d_1 (MaxPooling2 (None, 15, 15, 32)        0         
+_________________________________________________________________
+conv2d_4 (Conv2D)            (None, 15, 15, 32)        9248      
+_________________________________________________________________
+conv2d_5 (Conv2D)            (None, 15, 15, 32)        9248      
+_________________________________________________________________
+up_sampling2d (UpSampling2D) (None, 30, 30, 32)        0         
+_________________________________________________________________
+conv2d_6 (Conv2D)            (None, 30, 30, 32)        9248      
+_________________________________________________________________
+conv2d_7 (Conv2D)            (None, 30, 30, 32)        9248      
+_________________________________________________________________
+up_sampling2d_1 (UpSampling2 (None, 60, 60, 32)        0         
+_________________________________________________________________
+conv2d_8 (Conv2D)            (None, 60, 60, 32)        9248      
+_________________________________________________________________
+conv2d_9 (Conv2D)            (None, 60, 60, 16)        4624      
+_________________________________________________________________
+conv2d_10 (Conv2D)           (None, 60, 60, 3)         435       
+=================================================================
+Total params: 74,595
+Trainable params: 74,595
+Non-trainable params: 0
+_________________________________________________________________
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">history</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                    <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Train on 1000 samples, validate on 200 samples
+Epoch 1/20
+1000/1000 [==============================] - 19s 19ms/sample - loss: 0.3355 - binary_accuracy: 0.9403 - recall: 0.0318 - precision: 0.0616 - val_loss: 0.1344 - val_binary_accuracy: 0.9601 - val_recall: 0.0000e+00 - val_precision: 0.0000e+00
+Epoch 2/20
+1000/1000 [==============================] - 17s 17ms/sample - loss: 0.0972 - binary_accuracy: 0.9598 - recall: 0.0000e+00 - precision: 0.0000e+00 - val_loss: 0.0818 - val_binary_accuracy: 0.9601 - val_recall: 0.0000e+00 - val_precision: 0.0000e+00
+Epoch 3/20
+1000/1000 [==============================] - 17s 17ms/sample - loss: 0.0773 - binary_accuracy: 0.9598 - recall: 0.0000e+00 - precision: 0.0000e+00 - val_loss: 0.0723 - val_binary_accuracy: 0.9601 - val_recall: 0.0000e+00 - val_precision: 0.0000e+00
+Epoch 4/20
+1000/1000 [==============================] - 17s 17ms/sample - loss: 0.0694 - binary_accuracy: 0.9598 - recall: 0.0000e+00 - precision: 0.0000e+00 - val_loss: 0.0661 - val_binary_accuracy: 0.9601 - val_recall: 0.0000e+00 - val_precision: 0.0000e+00
+Epoch 5/20
+1000/1000 [==============================] - 17s 17ms/sample - loss: 0.0648 - binary_accuracy: 0.9598 - recall: 0.0000e+00 - precision: 0.0000e+00 - val_loss: 0.0623 - val_binary_accuracy: 0.9601 - val_recall: 1.3908e-04 - val_precision: 1.0000
+Epoch 6/20
+1000/1000 [==============================] - 18s 18ms/sample - loss: 0.0599 - binary_accuracy: 0.9597 - recall: 0.0242 - precision: 0.8687 - val_loss: 0.0583 - val_binary_accuracy: 0.9583 - val_recall: 0.1040 - val_precision: 0.6663
+Epoch 7/20
+1000/1000 [==============================] - 18s 18ms/sample - loss: 0.0541 - binary_accuracy: 0.9581 - recall: 0.1451 - precision: 0.7368 - val_loss: 0.0524 - val_binary_accuracy: 0.9566 - val_recall: 0.2215 - val_precision: 0.6927
+Epoch 8/20
+1000/1000 [==============================] - 18s 18ms/sample - loss: 0.0502 - binary_accuracy: 0.9578 - recall: 0.1983 - precision: 0.7569 - val_loss: 0.0477 - val_binary_accuracy: 0.9577 - val_recall: 0.2330 - val_precision: 0.7623
+Epoch 9/20
+1000/1000 [==============================] - 17s 17ms/sample - loss: 0.0474 - binary_accuracy: 0.9573 - recall: 0.2586 - precision: 0.7650 - val_loss: 0.0490 - val_binary_accuracy: 0.9541 - val_recall: 0.3124 - val_precision: 0.6513
+Epoch 10/20
+1000/1000 [==============================] - 17s 17ms/sample - loss: 0.0464 - binary_accuracy: 0.9563 - recall: 0.3471 - precision: 0.7608 - val_loss: 0.0457 - val_binary_accuracy: 0.9553 - val_recall: 0.4305 - val_precision: 0.7479
+Epoch 11/20
+1000/1000 [==============================] - 17s 17ms/sample - loss: 0.0397 - binary_accuracy: 0.9576 - recall: 0.4826 - precision: 0.8528 - val_loss: 0.0355 - val_binary_accuracy: 0.9593 - val_recall: 0.4879 - val_precision: 0.9086
+Epoch 12/20
+1000/1000 [==============================] - 17s 17ms/sample - loss: 0.0346 - binary_accuracy: 0.9585 - recall: 0.5753 - precision: 0.8972 - val_loss: 0.0332 - val_binary_accuracy: 0.9583 - val_recall: 0.5929 - val_precision: 0.8888
+Epoch 13/20
+1000/1000 [==============================] - 18s 18ms/sample - loss: 0.0308 - binary_accuracy: 0.9592 - recall: 0.6123 - precision: 0.9226 - val_loss: 0.0300 - val_binary_accuracy: 0.9594 - val_recall: 0.5996 - val_precision: 0.9226
+Epoch 14/20
+1000/1000 [==============================] - 18s 18ms/sample - loss: 0.0283 - binary_accuracy: 0.9596 - recall: 0.6402 - precision: 0.9383 - val_loss: 0.0269 - val_binary_accuracy: 0.9603 - val_recall: 0.6119 - val_precision: 0.9553
+Epoch 15/20
+1000/1000 [==============================] - 17s 17ms/sample - loss: 0.0258 - binary_accuracy: 0.9600 - recall: 0.6598 - precision: 0.9533 - val_loss: 0.0291 - val_binary_accuracy: 0.9596 - val_recall: 0.6172 - val_precision: 0.9294
+Epoch 16/20
+1000/1000 [==============================] - 17s 17ms/sample - loss: 0.0256 - binary_accuracy: 0.9601 - recall: 0.6609 - precision: 0.9533 - val_loss: 0.0249 - val_binary_accuracy: 0.9601 - val_recall: 0.7022 - val_precision: 0.9524
+Epoch 17/20
+1000/1000 [==============================] - 17s 17ms/sample - loss: 0.0243 - binary_accuracy: 0.9603 - recall: 0.6760 - precision: 0.9623 - val_loss: 0.0238 - val_binary_accuracy: 0.9603 - val_recall: 0.7151 - val_precision: 0.9571
+Epoch 18/20
+1000/1000 [==============================] - 17s 17ms/sample - loss: 0.0230 - binary_accuracy: 0.9605 - recall: 0.6821 - precision: 0.9672 - val_loss: 0.0229 - val_binary_accuracy: 0.9606 - val_recall: 0.6724 - val_precision: 0.9634
+Epoch 19/20
+1000/1000 [==============================] - 17s 17ms/sample - loss: 0.0223 - binary_accuracy: 0.9605 - recall: 0.6864 - precision: 0.9696 - val_loss: 0.0235 - val_binary_accuracy: 0.9603 - val_recall: 0.7354 - val_precision: 0.9565
+Epoch 20/20
+1000/1000 [==============================] - 17s 17ms/sample - loss: 0.0223 - binary_accuracy: 0.9605 - recall: 0.6853 - precision: 0.9691 - val_loss: 0.0225 - val_binary_accuracy: 0.9605 - val_recall: 0.7063 - val_precision: 0.9638
+</code></pre></div></div>
+
+<p>Incredibly, this small modification to our model has allowed us to gain 10 percentage points in recall! The training process also takes about half the time.<br>
+Let’s see how that looks by displaying the examples we checked earlier.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">test_y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_x</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">simple_deep_learning.mnist_extended.semantic_segmentation</span> <span class="kn">import</span> <span class="n">display_segmented_image</span>
+
+<span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test_y_predicted</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'Example </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s">'</span><span class="p">)</span>
+    <span class="n">display_grayscale_array</span><span class="p">(</span><span class="n">test_x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">'Input image'</span><span class="p">)</span>
+    <span class="n">display_segmented_image</span><span class="p">(</span><span class="n">test_y_predicted</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax2</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">'Segmented image'</span><span class="p">)</span>
+    <span class="n">plot_class_masks</span><span class="p">(</span><span class="n">test_y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">test_y_predicted</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s">'y target and y predicted sliced along the channel axis'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Example 138
+</code></pre></div></div>
+<figure><img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/semantic_segmentation_27_1.png" alt="segmentation prediction 1"> </figure>
+<figure><img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/semantic_segmentation_27_2.png" alt="segmentation prediction 1 slices"></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Example 106
+</code></pre></div></div>
+<figure><img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/semantic_segmentation_27_4.png" alt="segmentation prediction 2"> </figure>
+<figure><img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/semantic_segmentation_27_5.png" alt="segmentation prediction 2 slices"></figure>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Example 109
+</code></pre></div></div>
+<figure><img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/semantic_segmentation_27_7.png" alt="segmentation prediction 3"> </figure>
+<figure><img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/semantic_segmentation_27_8.png" alt="segmentation prediction 3 slices"></figure>
+
+<p>The difference is huge, the model no longer gets confused between the 1 and the 0 (example 117) and the segmentation looks almost perfect.</p>
+
+<h2 id="conclusion">Conclusion<a class="header-link" href="https://awaywithideas.com/a-simple-example-of-semantic-segmentation-with-tensorflow-keras/#conclusion" title="Permalink"><span class="sr-only">Permalink</span><i class="fas fa-link"></i></a></h2>
+
+<p>State of the art models for semantic segmentation are far more complicated than what we’ve seen so far. What we’ve created isn’t going to get us on the leaderboard of any semantic segmentation competition… However, hopefully you’ve understood that the core concepts behind semantic segmentation are actually very simple. This post is just an introduction, I hope your journey won’t end here and that I have encouraged you to experiment with your own modelling ideas. You could make the ch Perhaps you could look at the concepts that make state of the art semantic segmentation models and try to implement them yourself on this simple dataset. A good starting point is this <a href="https://nanonets.com/blog/semantic-image-segmentation-2020/">great article</a> that provides an explanation of more advanced ideas in semantic segmentation.</p>
+
+<p>I hope enjoyed reading this post. If you have any questions or have done something cool with the this dataset that you would like to share, comment below or reach out to me on <a href="https://www.linkedin.com/in/luketonin/">Linkedin</a>. I love hearing from you.</p>
+
+<p>Have a great day,<br>
+Luke</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="https://awaywithideas.com/tags/#image-segmentation" class="page__taxonomy-item" rel="tag">image segmentation</a><span class="sep">, </span>
+    
+      <a href="https://awaywithideas.com/tags/#keras" class="page__taxonomy-item" rel="tag">keras</a><span class="sep">, </span>
+    
+      <a href="https://awaywithideas.com/tags/#mnist" class="page__taxonomy-item" rel="tag">mnist</a><span class="sep">, </span>
+    
+      <a href="https://awaywithideas.com/tags/#tensorflow" class="page__taxonomy-item" rel="tag">tensorflow</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="https://awaywithideas.com/categories/#machine-learning" class="page__taxonomy-item" rel="tag">Machine Learning</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2020-10-27T22:33:49+00:00">October 27, 2020</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?text=A+simple+example+of+semantic+segmentation+with+tensorflow+keras%20127.0.0.1%2F4000%2Fa-simple-example-of-semantic-segmentation-with-tensorflow-keras%2F" class="btn btn--twitter" onclick="window.open(this.href, &#39;window&#39;, &#39;left=20,top=20,width=500,height=500,toolbar=1,resizable=0&#39;); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=127.0.0.1%2F4000%2Fa-simple-example-of-semantic-segmentation-with-tensorflow-keras%2F" class="btn btn--facebook" onclick="window.open(this.href, &#39;window&#39;, &#39;left=20,top=20,width=500,height=500,toolbar=1,resizable=0&#39;); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=127.0.0.1%2F4000%2Fa-simple-example-of-semantic-segmentation-with-tensorflow-keras%2F" class="btn btn--linkedin" onclick="window.open(this.href, &#39;window&#39;, &#39;left=20,top=20,width=500,height=500,toolbar=1,resizable=0&#39;); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="https://awaywithideas.com/the-optimal-python-project-structure/" class="pagination--pager" title="The optimal python project structure
+">Previous</a>
+    
+    
+      <a href="https://awaywithideas.com/mnist-extended-a-dataset-for-semantic-segmentation-and-object-detection/" class="pagination--pager" title="MNIST extended: a dataset for semantic segmentation and object detection
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope="" itemtype="https://schema.org/CreativeWork">
+    
+      <div class="archive__item-teaser">
+        <img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/Starsinthesky-scaled-e1581872801749-1560x413.jpg" alt="">
+      </div>
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="https://awaywithideas.com/simple-deep-learning/" rel="permalink">Simple deep learning
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">The field of deep learning is vast. The sheer number of publications on the subject is enough to overwhelm anyone. In this series we’ll be taking a step back...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope="" itemtype="https://schema.org/CreativeWork">
+    
+      <div class="archive__item-teaser">
+        <img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/featured_image.png" alt="">
+      </div>
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="https://awaywithideas.com/mnist-extended-a-dataset-for-semantic-segmentation-and-object-detection/" rel="permalink">MNIST extended: a dataset for semantic segmentation and object detection
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Most open source datasets for computer vision are huge and complex. Building a model from scratch using ImageNet or Coco is impossible without days of traini...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope="" itemtype="https://schema.org/CreativeWork">
+    
+      <div class="archive__item-teaser">
+        <img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/Python.svg_-e1571602766898.png" alt="">
+      </div>
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="https://awaywithideas.com/the-optimal-python-project-structure/" rel="permalink">The optimal python project structure
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">In this post, I will describe a python project structure that I have found extremely useful over a wide variety of projects. We’re going to build this struct...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope="" itemtype="https://schema.org/CreativeWork">
+    
+      <div class="archive__item-teaser">
+        <img src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/Python.svg_-e1571602766898.png" alt="">
+      </div>
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="https://awaywithideas.com/python-logging-a-practical-guide/" rel="permalink">Python logging – A practical guide
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Python logging isn’t easy. When I was learning python, I made many attempts to use logging in my applications. Usually I would end up frustrated and thinking...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != &#39;Enter&#39;;">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term...">
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/LukeTonin" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          <li><a href="https://www.linkedin.com/in/luketonin/" rel="nofollow noopener noreferrer"><i class="fab fa-linkedin" aria-hidden="true"></i> Linkedin</a></li>
+        
+      
+    
+
+    
+      <li><a href="https://awaywithideas.com/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">© 2021 Luke Tonin. Powered by <a href="https://jekyllrb.com/" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/main.min.js"></script>
+
+
+
+
+<script src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/lunr.min.js"></script>
+<script src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/lunr-store.js"></script>
+<script src="./A simple example of semantic segmentation with tensorflow keras - Away with ideas_files/lunr-en.js"></script>
+
+
+
+
+  <script>
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-144489530-1']);
+  
+    _gaq.push(['_gat._anonymizeIp']);
+  
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+<div data-v-44d23264="" id="ng-web-summary"><div data-v-44d23264="" id="ng-nc-icon" class="ng-icon" style=""><div data-v-44d23264="" class="ng-icon-logo"><svg data-v-44d23264="" width="28" height="29" viewBox="0 0 1259 1328" fill="none" xmlns="http://www.w3.org/2000/svg" class="ng-icon-svg"><path data-v-44d23264="" d="M948.355 1130.77C942.145 1137.69 936.193 1144.01 930.608 1149.72C936.641 1143.36 942.556 1137.04 948.355 1130.77C1040.66 1027.91 1189.99 794.063 1040 518C1002.21 451.645 842.197 322.245 679.128 368.304C610.046 374.21 468.82 444.094 456.563 676.383C396.54 569.106 364.511 322.886 638 216C773.968 162.861 1095.68 240.056 1186 469.998C1236.89 599.555 1248.35 806.182 948.355 1130.77Z" fill="#2E83FB"></path> <path data-v-44d23264="" d="M143.9 1017.84C137.864 1013.71 132.253 1009.69 127.088 1005.84C132.73 1009.91 138.334 1013.91 143.9 1017.84C256.583 1094.97 517.147 1211.93 774 1024C834.713 977.686 935.341 807.691 867.913 652.235C852.833 584.562 764.71 453.936 532.866 472.816C631.164 399.001 870.9 334.372 1013.36 591.132C1084.18 718.783 1050.65 1047.93 834.835 1168.15C712.75 1236.16 508.368 1275.16 143.9 1017.84Z" fill="#2E83FB"></path> <path data-v-44d23264="" d="M300.056 131.307C310.071 120.08 319.585 110.084 328.201 101.387C318.521 111.471 309.141 121.444 300.056 131.307C206.432 236.268 69.0234 448.956 212 716C249.382 782.586 411.537 929.391 574.885 884.333C644.002 878.85 785.654 809.833 799.335 577.624C858.699 685.267 889.217 931.678 615.078 1036.89C478.788 1089.19 157.551 1010.02 68.6463 779.533C19.1305 651.158 8.59471 447.711 300.056 131.307Z" fill="#2E83FB"></path> <path data-v-44d23264="" d="M1151.28 304.267C1160.18 313.06 1168.16 321.406 1175.19 329.061C1167.16 320.584 1159.19 312.321 1151.28 304.267C1051.76 205.898 837.877 51.6189 560 184C491.732 218.214 344.191 373.421 381.528 538.706C383.759 608.003 446.048 752.74 677.358 777.31C567.046 831.554 319.473 850.467 227.256 571.69C181.41 433.094 275.574 115.929 509.986 37.9464C641.213 -5.7086 846.35 -6.46511 1151.28 304.267Z" fill="#2E83FB"></path></svg></div> <span data-v-44d23264="" class="ng-close-button" style="display: none;"><svg data-v-44d23264="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1" width="16.029022216796875" height="15.999999046325684" viewBox="0 0 16.029022216796875 15.999999046325684"><defs data-v-44d23264=""><clippath data-v-44d23264="" id="master_svg0_427_827"><rect data-v-44d23264="" x="0" y="0" width="16.029022216796875" height="15.999999046325684" rx="0"></rect></clippath></defs> <g data-v-44d23264="" clip-path="url(#master_svg0_427_827)"><g data-v-44d23264=""><path data-v-44d23264="" d="M8.014653124999999,1C4.148143125,1,1.001953125,4.14001,1.001953125,8C1.001953125,11.86,4.147653125,15,8.014653124999999,15C11.881153125,15,15.027353125,11.86,15.027353125,8C15.027353125,4.14001,11.881653125,1,8.014653124999999,1ZM10.875333125,10.156C11.070653125,10.352,11.070153125,10.668,10.874333125,10.863C10.776673125,10.96,10.648933125,11.009,10.520703125,11.009C10.391973125,11.009,10.263743125,10.96,10.166053125,10.86201L8.012143125,8.7055L5.851243125,10.83951C5.753573125,10.93552,5.626323125,10.98401,5.499093125,10.98401C5.369863125,10.98401,5.241133125,10.9345,5.142953125,10.8355C4.948593125,10.639,4.950103125,10.32299,5.146963125,10.1285L7.305373125,7.9975L5.154963125,5.844C4.959613125000001,5.64849,4.960123125,5.332,5.155963125,5.137C5.351823125,4.94149,5.668383125,4.94251,5.864243125,5.13799L8.017643125,7.29399L10.178543125,5.16001C10.374893125,4.96551,10.692473125,4.967499999999999,10.886833125,5.16401C11.081653125,5.36052,11.079653125,5.67701,10.882823125,5.87101L8.724443125,8.00199L10.875333125,10.156Z" fill="#A5A5A5" fill-opacity="1"></path></g></g></svg></span></div> <div data-v-44d23264="" id="ng-nc-web-content" class="ng-web-content ng-border-radius" style="display: none;"><div data-v-44d23264="" class="ng-summary"><div data-v-44d23264="" class="ng-summary-content-header ng-summary-margin-left-right-width"><div data-v-44d23264="" class="ng-left"><div data-v-44d23264="" class="ng-flex-center"><svg data-v-44d23264="" width="29" height="29" viewBox="0 0 1259 1328" fill="none" xmlns="http://www.w3.org/2000/svg"><path data-v-44d23264="" d="M948.355 1130.77C942.145 1137.69 936.193 1144.01 930.608 1149.72C936.641 1143.36 942.556 1137.04 948.355 1130.77C1040.66 1027.91 1189.99 794.063 1040 518C1002.21 451.645 842.197 322.245 679.128 368.304C610.046 374.21 468.82 444.094 456.563 676.383C396.54 569.106 364.511 322.886 638 216C773.968 162.861 1095.68 240.056 1186 469.998C1236.89 599.555 1248.35 806.182 948.355 1130.77Z" fill="#2E83FB"></path> <path data-v-44d23264="" d="M143.9 1017.84C137.864 1013.71 132.253 1009.69 127.088 1005.84C132.73 1009.91 138.334 1013.91 143.9 1017.84C256.583 1094.97 517.147 1211.93 774 1024C834.713 977.686 935.341 807.691 867.913 652.235C852.833 584.562 764.71 453.936 532.866 472.816C631.164 399.001 870.9 334.372 1013.36 591.132C1084.18 718.783 1050.65 1047.93 834.835 1168.15C712.75 1236.16 508.368 1275.16 143.9 1017.84Z" fill="#2E83FB"></path> <path data-v-44d23264="" d="M300.056 131.307C310.071 120.08 319.585 110.084 328.201 101.387C318.521 111.471 309.141 121.444 300.056 131.307C206.432 236.268 69.0234 448.956 212 716C249.382 782.586 411.537 929.391 574.885 884.333C644.002 878.85 785.654 809.833 799.335 577.624C858.699 685.267 889.217 931.678 615.078 1036.89C478.788 1089.19 157.551 1010.02 68.6463 779.533C19.1305 651.158 8.59471 447.711 300.056 131.307Z" fill="#2E83FB"></path> <path data-v-44d23264="" d="M1151.28 304.267C1160.18 313.06 1168.16 321.406 1175.19 329.061C1167.16 320.584 1159.19 312.321 1151.28 304.267C1051.76 205.898 837.877 51.6189 560 184C491.732 218.214 344.191 373.421 381.528 538.706C383.759 608.003 446.048 752.74 677.358 777.31C567.046 831.554 319.473 850.467 227.256 571.69C181.41 433.094 275.574 115.929 509.986 37.9464C641.213 -5.7086 846.35 -6.46511 1151.28 304.267Z" fill="#2E83FB"></path></svg></div> <div data-v-44d23264="" class="ng-brand">NoteGPT</div></div> <div data-v-44d23264="" class="ng-right"><svg data-v-44d23264="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1" width="16" height="16" viewBox="0 0 16 16" class="ng-close"><defs data-v-44d23264=""><clippath data-v-44d23264="" id="master_svg0_38_546"><rect data-v-44d23264="" x="0" y="0" width="16" height="16" rx="0"></rect></clippath></defs> <g data-v-44d23264="" clip-path="url(#master_svg0_38_546)"><g data-v-44d23264=""><path data-v-44d23264="" d="M8.78570796875,7.9812567236328125L13.39501796875,3.3958397236328124C13.61301796875,3.1789947236328127,13.61411796875,2.8276007236328127,13.39721796875,2.6096367236328124C13.17981796875,2.3911292236328126,12.82901796875,2.3905694236328126,12.61101796875,2.6074147236328127L8.00060796875,7.193396723632812L3.43020596875,2.6090937236328124C3.21391996875,2.3922484236328123,2.86196696875,2.3911292236328126,2.64400296875,2.6079747236328124C2.42659806875,2.8248197236328125,2.42605446875,3.1767727236328125,2.64288396875,3.3947367236328123L7.21219796875,7.977936723632813L2.60508496875,12.560566723632812C2.38712096875,12.777366723632813,2.38601756875,13.128766723632813,2.6028629687500002,13.346766723632813C2.7112849687500002,13.455766723632813,2.85417996875,13.510766723632813,2.99707496875,13.510766723632813C3.13885096875,13.510766723632813,3.28064296875,13.456866723632812,3.3890659687499998,13.348966723632813L7.99728796875,8.765236723632812L12.60941796875,13.391266723632812C12.71781796875,13.500266723632812,12.86011796875,13.554766723632813,13.00301796875,13.554766723632813C13.14541796875,13.554766723632813,13.28721796875,13.500266723632812,13.39561796875,13.392366723632813C13.61301796875,13.175566723632812,13.61351796875,12.824166723632812,13.39671796875,12.606166723632812L8.78570796875,7.9812567236328125Z" fill="#212427" fill-opacity="0.501960813999176"></path></g></g></svg></div></div> <div data-v-44d23264="" class="ng-summary-content-body ng-summary-margin-left-right-width ng-border-radius-6"><div data-v-44d23264="" class="ng-toolbar"><div data-v-44d23264="" class="ng-toolbar-left"><div data-v-44d23264="" class="el-select my-language el-select--small"><!----><div class="el-input el-input--small el-input--suffix"><!----><input type="text" readonly="readonly" autocomplete="off" placeholder="please select" class="el-input__inner"><!----><span class="el-input__suffix"><span class="el-input__suffix-inner"><i class="el-select__caret el-input__icon el-icon-arrow-up"></i><!----><!----><!----><!----><!----></span><!----></span><!----><!----></div><div class="el-select-dropdown el-popper" style="display: none;"><div class="el-scrollbar" style=""><div class="el-select-dropdown__wrap el-scrollbar__wrap" style="margin-bottom: -15px; margin-right: -15px;"><ul class="el-scrollbar__view el-select-dropdown__list"><!----><li data-v-44d23264="" class="el-select-dropdown__item selected"><span data-v-44d23264="" style="float: left;">Prompt1</span> <!----></li></ul></div><div class="el-scrollbar__bar is-horizontal"><div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div></div><div class="el-scrollbar__bar is-vertical"><div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div></div></div><!----></div></div></div> <div data-v-44d23264="" class="ng-toolbar-right"><svg data-v-44d23264="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1" width="16" height="16" viewBox="0 0 16 16" class="ng-toolbar-refresh"><defs data-v-44d23264=""><clippath data-v-44d23264="" id="master_svg0_38_554"><rect data-v-44d23264="" x="0" y="0" width="16" height="16" rx="0"></rect></clippath></defs> <g data-v-44d23264="" clip-path="url(#master_svg0_38_554)"><g data-v-44d23264=""><g data-v-44d23264=""><path data-v-44d23264="" d="M7.956255,15.659392952823639C6.993755,15.659392952823639,6.060935,15.47029295282364,5.181255,15.09839295282364C4.332815,14.739092952823638,3.570315,14.224992952823639,2.915625,13.570292952823639C2.260935,12.915592952823639,1.746875,12.15309295282364,1.3875,11.30469295282364C1.017188,10.42656295282364,0.828125,9.49219295282364,0.828125,8.529692952823638C0.828125,7.259372952823639,1.167188,6.012502952823639,1.80625,4.923442952823638C2.428125,3.867192952823639,3.315625,2.981252952823639,4.375005,2.365625952823639C4.523435,2.278125952823639,4.715625,2.329687952823639,4.801565,2.478125952823639C4.889065,2.626562952823639,4.837505,2.818752952823639,4.689064999999999,2.904692952823639C2.693755,4.067192952823639,1.453125,6.223442952823639,1.453125,8.529692952823638C1.453125,12.115592952823638,4.370315,15.03279295282364,7.956255,15.03279295282364C11.542225,15.03279295282364,14.459425,12.115592952823638,14.459425,8.529692952823638C14.459425,5.323442952823639,12.167225,2.625002952823639,9.007815,2.110937952823639C8.837505,2.0828129528236388,8.721875,1.923437952823639,8.750005,1.751562952823639C8.778125,1.579688252823639,8.937505,1.465625752823639,9.109375,1.4937507228236389C10.760935,1.7625009528236388,12.273425,2.6125029528236388,13.368725,3.889062952823639C13.910925,4.521872952823639,14.335925,5.235942952823638,14.628125,6.012502952823639C14.931225,6.815622952823639,15.085925,7.662502952823639,15.085925,8.529692952823638C15.085925,9.49219295282364,14.896925,10.42500295282364,14.525025,11.30469295282364C14.165625,12.15309295282364,13.651525,12.915592952823639,12.996825,13.570292952823639C12.342225,14.224992952823639,11.579725,14.739092952823638,10.731245,15.09839295282364C9.853125,15.47029295282364,8.918745,15.659392952823639,7.956255,15.659392952823639Z" fill="#212427" fill-opacity="0.6000000238418579"></path></g> <g data-v-44d23264=""><path data-v-44d23264="" d="M9.9300578125,0.4640698559095764L7.3081798125,1.1046951159095764C7.1800544725,1.1359451159095764,7.1331795125,1.2953201159095764,7.2238045125,1.3906321159095762L9.1253678125,3.3812601159095763C9.2175578125,3.4781301159095763,9.3800578125,3.4375101159095762,9.4159878125,3.3078201159095766L10.1363078125,0.6765701159095764C10.1706778125,0.5500073159095764,10.0566178125,0.4328198159095764,9.9300578125,0.4640698559095764Z" fill="#212427" fill-opacity="0.6000000238418579"></path></g></g></g></svg> <svg data-v-44d23264="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1" width="16" height="16" viewBox="0 0 16 15.624000549316406" class="ng-toolbar-copy"><defs data-v-44d23264=""><clippath data-v-44d23264="" id="master_svg0_38_550"><rect data-v-44d23264="" x="0" y="0" width="16" height="15.624000549316406" rx="0"></rect></clippath></defs> <g data-v-44d23264="" clip-path="url(#master_svg0_38_550)"><g data-v-44d23264=""><g data-v-44d23264=""><path data-v-44d23264="" d="M4.2036759201431275,11.615755705070496L2.4063059201431276,11.615755705070496C1.7120749201431273,11.615755705070496,1.1475362062451275,11.051255705070496,1.1475362062451275,10.357005705070495L1.1475362062451275,2.2978257050704958C1.1475362062451275,1.6035947050704955,1.7120749201431273,1.0390557050704956,2.4063059201431276,1.0390557050704956L9.865855920143128,1.0390557050704956C10.560085920143127,1.0390557050704956,11.124615920143128,1.6035947050704955,11.124615920143128,2.2978257050704958L11.124615920143128,3.3673957050704955C11.124615920143128,3.5352357050704954,10.987295920143128,3.672555705070496,10.819465920143127,3.672555705070496C10.651625920143127,3.672555705070496,10.514305920143128,3.5352357050704954,10.514305920143128,3.3673957050704955L10.514305920143128,2.2978257050704958C10.514305920143128,1.9407927050704956,10.224405920143127,1.6493677050704956,9.865855920143128,1.6493677050704956L2.4063059201431276,1.6493677050704956C2.0492729201431272,1.6493677050704956,1.7578489201431275,1.9392667050704957,1.7578489201431275,2.2978257050704958L1.7578489201431275,10.358525705070496C1.7578489201431275,10.715565705070496,2.0477469201431275,11.006985705070496,2.4063059201431276,11.006985705070496L4.2036759201431275,11.006985705070496C4.3715159201431275,11.006985705070496,4.508835920143127,11.144355705070495,4.508835920143127,11.312155705070495C4.508835920143127,11.479955705070495,4.373035920143128,11.615755705070496,4.2036759201431275,11.615755705070496Z" fill="#212427" fill-opacity="0.6000000238418579"></path></g> <g data-v-44d23264=""><path data-v-44d23264="" d="M13.877388107643128,14.816890031242371L6.304928107643128,14.816890031242371C5.6564741076431275,14.816890031242371,5.127028107643127,14.288930031242371,5.127028107643127,13.63895003124237L5.127028107643127,5.468390031242371C5.127028107643127,4.819936031242371,5.654948107643127,4.290490031242371,6.304928107643128,4.290490031242371L13.878908107643127,4.290490031242371C14.527368107643127,4.290490031242371,15.056818107643128,4.8184100312423706,15.056818107643128,5.468390031242371L15.056818107643128,13.64048003124237C15.055288107643127,14.28894003124237,14.527368107643127,14.816890031242371,13.877388107643128,14.816890031242371ZM6.304928107643128,4.90080303124237C5.992146107643127,4.90080303124237,5.737340107643128,5.15560803124237,5.737340107643128,5.468390031242371L5.737340107643128,13.64048003124237C5.737340107643128,13.95326003124237,5.992146107643127,14.20807003124237,6.304928107643128,14.20807003124237L13.878908107643127,14.20807003124237C14.191698107643127,14.20807003124237,14.446498107643128,13.95326003124237,14.446498107643128,13.64048003124237L14.446498107643128,5.468390031242371C14.446498107643128,5.15560803124237,14.191698107643127,4.900802031242371,13.878908107643127,4.900802031242371L6.304928107643128,4.90080303124237Z" fill="#212427" fill-opacity="0.6000000238418579"></path></g></g></g></svg></div></div> <div data-v-44d23264="" class="separator-panel"></div> <div data-v-44d23264="" class="ng-summary-markdown scroll-div"><div data-v-44d23264="" id="ng_web_summary_text" class="markdown-body"></div></div></div></div> <div data-v-44d23264="" class="ng-explain" style="display: none;"><div data-v-44d23264="" class="ng-explain-content-header ng-explain-margin-left-right-width"><div data-v-44d23264="" class="ng-left"><div data-v-44d23264="" class="ng-flex-center"><svg data-v-44d23264="" width="29" height="29" viewBox="0 0 1259 1328" fill="none" xmlns="http://www.w3.org/2000/svg"><path data-v-44d23264="" d="M948.355 1130.77C942.145 1137.69 936.193 1144.01 930.608 1149.72C936.641 1143.36 942.556 1137.04 948.355 1130.77C1040.66 1027.91 1189.99 794.063 1040 518C1002.21 451.645 842.197 322.245 679.128 368.304C610.046 374.21 468.82 444.094 456.563 676.383C396.54 569.106 364.511 322.886 638 216C773.968 162.861 1095.68 240.056 1186 469.998C1236.89 599.555 1248.35 806.182 948.355 1130.77Z" fill="#2E83FB"></path> <path data-v-44d23264="" d="M143.9 1017.84C137.864 1013.71 132.253 1009.69 127.088 1005.84C132.73 1009.91 138.334 1013.91 143.9 1017.84C256.583 1094.97 517.147 1211.93 774 1024C834.713 977.686 935.341 807.691 867.913 652.235C852.833 584.562 764.71 453.936 532.866 472.816C631.164 399.001 870.9 334.372 1013.36 591.132C1084.18 718.783 1050.65 1047.93 834.835 1168.15C712.75 1236.16 508.368 1275.16 143.9 1017.84Z" fill="#2E83FB"></path> <path data-v-44d23264="" d="M300.056 131.307C310.071 120.08 319.585 110.084 328.201 101.387C318.521 111.471 309.141 121.444 300.056 131.307C206.432 236.268 69.0234 448.956 212 716C249.382 782.586 411.537 929.391 574.885 884.333C644.002 878.85 785.654 809.833 799.335 577.624C858.699 685.267 889.217 931.678 615.078 1036.89C478.788 1089.19 157.551 1010.02 68.6463 779.533C19.1305 651.158 8.59471 447.711 300.056 131.307Z" fill="#2E83FB"></path> <path data-v-44d23264="" d="M1151.28 304.267C1160.18 313.06 1168.16 321.406 1175.19 329.061C1167.16 320.584 1159.19 312.321 1151.28 304.267C1051.76 205.898 837.877 51.6189 560 184C491.732 218.214 344.191 373.421 381.528 538.706C383.759 608.003 446.048 752.74 677.358 777.31C567.046 831.554 319.473 850.467 227.256 571.69C181.41 433.094 275.574 115.929 509.986 37.9464C641.213 -5.7086 846.35 -6.46511 1151.28 304.267Z" fill="#2E83FB"></path></svg></div> <div data-v-44d23264="" class="ng-brand">NoteGPT</div></div> <div data-v-44d23264="" class="ng-right"><svg data-v-44d23264="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1" width="16" height="16" viewBox="0 0 16 16" class="ng-feedback"><defs data-v-44d23264=""><clippath data-v-44d23264="" id="master_svg0_38_548"><rect data-v-44d23264="" x="0" y="0" width="16" height="16" rx="0"></rect></clippath></defs> <g data-v-44d23264="" clip-path="url(#master_svg0_38_548)"><g data-v-44d23264=""><path data-v-44d23264="" d="M13.8,1.3000030517578125L2.2,1.3000030517578125C1.4,1.3000030517578125,0.75,1.9500030517578124,0.75,2.7000030517578124L0.75,11.800003051757812C0.75,12.550003051757812,1.4,13.200003051757813,2.2,13.200003051757813L6.2,13.200003051757813Q6.3,13.300003051757812,6.45,13.500003051757812C6.5,13.550003051757812,6.55,13.600003051757813,6.6,13.700003051757813Q6.7,13.850003051757813,6.75,13.900003051757812C7.2,14.600003051757813,7.55,14.950003051757813,8.1,14.950003051757813C8.65,14.950003051757813,9.05,14.600003051757813,9.5,13.900003051757812Q9.85,13.350003051757813,9.95,13.200003051757813L13.85,13.200003051757813C14.65,13.200003051757813,15.3,12.550003051757812,15.3,11.800003051757812L15.3,2.7000030517578124C15.25,1.9000030517578126,14.6,1.3000030517578125,13.8,1.3000030517578125ZM14.55,11.800003051757812C14.55,12.200003051757813,14.25,12.500003051757812,13.85,12.500003051757812L9.9,12.500003051757812C9.8,12.500003051757812,9.75,12.500003051757812,9.65,12.550003051757812C9.5,12.650003051757812,9.35,12.750003051757812,9.2,13.000003051757812Q9.15,13.100003051757813,8.85,13.550003051757812C8.55,14.050003051757812,8.3,14.250003051757812,8.1,14.250003051757812C7.9,14.250003051757812,7.7,14.050003051757812,7.35,13.550003051757812C7.3,13.500003051757812,7.25,13.350003051757813,7.2,13.350003051757813C7.15,13.250003051757812,7.1,13.200003051757813,7.05,13.150003051757812C6.75,12.750003051757812,6.55,12.550003051757812,6.2,12.550003051757812L2.2,12.550003051757812C1.8,12.550003051757812,1.5,12.250003051757812,1.5,11.850003051757813L1.5,2.7500030517578127C1.5,2.3500030517578123,1.85,2.0500030517578125,2.25,2.0500030517578125L13.85,2.0500030517578125C14.25,2.0500030517578125,14.6,2.3500030517578123,14.6,2.7500030517578127L14.6,11.800003051757812L14.55,11.800003051757812ZM3.45,7.5500030517578125C3.45,7.991833051757813,3.80817,8.350003051757813,4.25,8.350003051757813C4.6918299999999995,8.350003051757813,5.05,7.991833051757813,5.05,7.5500030517578125C5.05,7.108173051757812,4.6918299999999995,6.750003051757813,4.25,6.750003051757813C3.80817,6.750003051757813,3.45,7.108173051757812,3.45,7.5500030517578125ZM7.2,7.5500030517578125C7.2,7.991833051757813,7.55817,8.350003051757813,8,8.350003051757813C8.44183,8.350003051757813,8.8,7.991833051757813,8.8,7.5500030517578125C8.8,7.108173051757812,8.44183,6.750003051757813,8,6.750003051757813C7.55817,6.750003051757813,7.2,7.108173051757812,7.2,7.5500030517578125ZM10.9,7.5500030517578125C10.9,7.991833051757813,11.2582,8.350003051757813,11.7,8.350003051757813C12.1418,8.350003051757813,12.5,7.991833051757813,12.5,7.5500030517578125C12.5,7.108173051757812,12.1418,6.750003051757813,11.7,6.750003051757813C11.2582,6.750003051757813,10.9,7.108173051757812,10.9,7.5500030517578125Z" fill="#212427" fill-opacity="0.5"></path></g></g></svg> <svg data-v-44d23264="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1" width="16" height="16" viewBox="0 0 16 16" class="ng-close"><defs data-v-44d23264=""><clippath data-v-44d23264="" id="master_svg0_38_546"><rect data-v-44d23264="" x="0" y="0" width="16" height="16" rx="0"></rect></clippath></defs> <g data-v-44d23264="" clip-path="url(#master_svg0_38_546)"><g data-v-44d23264=""><path data-v-44d23264="" d="M8.78570796875,7.9812567236328125L13.39501796875,3.3958397236328124C13.61301796875,3.1789947236328127,13.61411796875,2.8276007236328127,13.39721796875,2.6096367236328124C13.17981796875,2.3911292236328126,12.82901796875,2.3905694236328126,12.61101796875,2.6074147236328127L8.00060796875,7.193396723632812L3.43020596875,2.6090937236328124C3.21391996875,2.3922484236328123,2.86196696875,2.3911292236328126,2.64400296875,2.6079747236328124C2.42659806875,2.8248197236328125,2.42605446875,3.1767727236328125,2.64288396875,3.3947367236328123L7.21219796875,7.977936723632813L2.60508496875,12.560566723632812C2.38712096875,12.777366723632813,2.38601756875,13.128766723632813,2.6028629687500002,13.346766723632813C2.7112849687500002,13.455766723632813,2.85417996875,13.510766723632813,2.99707496875,13.510766723632813C3.13885096875,13.510766723632813,3.28064296875,13.456866723632812,3.3890659687499998,13.348966723632813L7.99728796875,8.765236723632812L12.60941796875,13.391266723632812C12.71781796875,13.500266723632812,12.86011796875,13.554766723632813,13.00301796875,13.554766723632813C13.14541796875,13.554766723632813,13.28721796875,13.500266723632812,13.39561796875,13.392366723632813C13.61301796875,13.175566723632812,13.61351796875,12.824166723632812,13.39671796875,12.606166723632812L8.78570796875,7.9812567236328125Z" fill="#212427" fill-opacity="0.501960813999176"></path></g></g></svg></div></div> <div data-v-44d23264="" class="ng-explain-content-body ng-explain-margin-left-right-width ng-border-radius-6"><div data-v-44d23264="" class="ng-toolbar"><div data-v-44d23264="" class="ng-toolbar-left"><div data-v-44d23264="" class="el-select my-language el-select--small"><!----><div class="el-input el-input--small el-input--suffix"><!----><input type="text" readonly="readonly" autocomplete="off" placeholder="please select" class="el-input__inner"><!----><span class="el-input__suffix"><span class="el-input__suffix-inner"><i class="el-select__caret el-input__icon el-icon-arrow-up"></i><!----><!----><!----><!----><!----></span><!----></span><!----><!----></div><div class="el-select-dropdown el-popper" style="display: none;"><div class="el-scrollbar" style=""><div class="el-select-dropdown__wrap el-scrollbar__wrap" style="margin-bottom: -15px; margin-right: -15px;"><ul class="el-scrollbar__view el-select-dropdown__list"><!----><li data-v-44d23264="" class="el-select-dropdown__item selected"><span data-v-44d23264="" style="float: left;">Prompt1</span> <!----></li></ul></div><div class="el-scrollbar__bar is-horizontal"><div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div></div><div class="el-scrollbar__bar is-vertical"><div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div></div></div><!----></div></div></div> <div data-v-44d23264="" class="ng-toolbar-right"><svg data-v-44d23264="" slot="reference" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1" width="16" height="16" viewBox="0 0 16 16" class="ng-toolbar-refresh"><defs data-v-44d23264=""><clippath data-v-44d23264="" id="master_svg0_38_554"><rect data-v-44d23264="" x="0" y="0" width="16" height="16" rx="0"></rect></clippath></defs> <g data-v-44d23264="" clip-path="url(#master_svg0_38_554)"><g data-v-44d23264=""><g data-v-44d23264=""><path data-v-44d23264="" d="M7.956255,15.659392952823639C6.993755,15.659392952823639,6.060935,15.47029295282364,5.181255,15.09839295282364C4.332815,14.739092952823638,3.570315,14.224992952823639,2.915625,13.570292952823639C2.260935,12.915592952823639,1.746875,12.15309295282364,1.3875,11.30469295282364C1.017188,10.42656295282364,0.828125,9.49219295282364,0.828125,8.529692952823638C0.828125,7.259372952823639,1.167188,6.012502952823639,1.80625,4.923442952823638C2.428125,3.867192952823639,3.315625,2.981252952823639,4.375005,2.365625952823639C4.523435,2.278125952823639,4.715625,2.329687952823639,4.801565,2.478125952823639C4.889065,2.626562952823639,4.837505,2.818752952823639,4.689064999999999,2.904692952823639C2.693755,4.067192952823639,1.453125,6.223442952823639,1.453125,8.529692952823638C1.453125,12.115592952823638,4.370315,15.03279295282364,7.956255,15.03279295282364C11.542225,15.03279295282364,14.459425,12.115592952823638,14.459425,8.529692952823638C14.459425,5.323442952823639,12.167225,2.625002952823639,9.007815,2.110937952823639C8.837505,2.0828129528236388,8.721875,1.923437952823639,8.750005,1.751562952823639C8.778125,1.579688252823639,8.937505,1.465625752823639,9.109375,1.4937507228236389C10.760935,1.7625009528236388,12.273425,2.6125029528236388,13.368725,3.889062952823639C13.910925,4.521872952823639,14.335925,5.235942952823638,14.628125,6.012502952823639C14.931225,6.815622952823639,15.085925,7.662502952823639,15.085925,8.529692952823638C15.085925,9.49219295282364,14.896925,10.42500295282364,14.525025,11.30469295282364C14.165625,12.15309295282364,13.651525,12.915592952823639,12.996825,13.570292952823639C12.342225,14.224992952823639,11.579725,14.739092952823638,10.731245,15.09839295282364C9.853125,15.47029295282364,8.918745,15.659392952823639,7.956255,15.659392952823639Z" fill="#212427" fill-opacity="0.6000000238418579"></path></g> <g data-v-44d23264=""><path data-v-44d23264="" d="M9.9300578125,0.4640698559095764L7.3081798125,1.1046951159095764C7.1800544725,1.1359451159095764,7.1331795125,1.2953201159095764,7.2238045125,1.3906321159095762L9.1253678125,3.3812601159095763C9.2175578125,3.4781301159095763,9.3800578125,3.4375101159095762,9.4159878125,3.3078201159095766L10.1363078125,0.6765701159095764C10.1706778125,0.5500073159095764,10.0566178125,0.4328198159095764,9.9300578125,0.4640698559095764Z" fill="#212427" fill-opacity="0.6000000238418579"></path></g></g></g></svg> <svg data-v-44d23264="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1" width="16" height="16" viewBox="0 0 16 15.624000549316406" class="ng-toolbar-copy"><defs data-v-44d23264=""><clippath data-v-44d23264="" id="master_svg0_38_550"><rect data-v-44d23264="" x="0" y="0" width="16" height="15.624000549316406" rx="0"></rect></clippath></defs> <g data-v-44d23264="" clip-path="url(#master_svg0_38_550)"><g data-v-44d23264=""><g data-v-44d23264=""><path data-v-44d23264="" d="M4.2036759201431275,11.615755705070496L2.4063059201431276,11.615755705070496C1.7120749201431273,11.615755705070496,1.1475362062451275,11.051255705070496,1.1475362062451275,10.357005705070495L1.1475362062451275,2.2978257050704958C1.1475362062451275,1.6035947050704955,1.7120749201431273,1.0390557050704956,2.4063059201431276,1.0390557050704956L9.865855920143128,1.0390557050704956C10.560085920143127,1.0390557050704956,11.124615920143128,1.6035947050704955,11.124615920143128,2.2978257050704958L11.124615920143128,3.3673957050704955C11.124615920143128,3.5352357050704954,10.987295920143128,3.672555705070496,10.819465920143127,3.672555705070496C10.651625920143127,3.672555705070496,10.514305920143128,3.5352357050704954,10.514305920143128,3.3673957050704955L10.514305920143128,2.2978257050704958C10.514305920143128,1.9407927050704956,10.224405920143127,1.6493677050704956,9.865855920143128,1.6493677050704956L2.4063059201431276,1.6493677050704956C2.0492729201431272,1.6493677050704956,1.7578489201431275,1.9392667050704957,1.7578489201431275,2.2978257050704958L1.7578489201431275,10.358525705070496C1.7578489201431275,10.715565705070496,2.0477469201431275,11.006985705070496,2.4063059201431276,11.006985705070496L4.2036759201431275,11.006985705070496C4.3715159201431275,11.006985705070496,4.508835920143127,11.144355705070495,4.508835920143127,11.312155705070495C4.508835920143127,11.479955705070495,4.373035920143128,11.615755705070496,4.2036759201431275,11.615755705070496Z" fill="#212427" fill-opacity="0.6000000238418579"></path></g> <g data-v-44d23264=""><path data-v-44d23264="" d="M13.877388107643128,14.816890031242371L6.304928107643128,14.816890031242371C5.6564741076431275,14.816890031242371,5.127028107643127,14.288930031242371,5.127028107643127,13.63895003124237L5.127028107643127,5.468390031242371C5.127028107643127,4.819936031242371,5.654948107643127,4.290490031242371,6.304928107643128,4.290490031242371L13.878908107643127,4.290490031242371C14.527368107643127,4.290490031242371,15.056818107643128,4.8184100312423706,15.056818107643128,5.468390031242371L15.056818107643128,13.64048003124237C15.055288107643127,14.28894003124237,14.527368107643127,14.816890031242371,13.877388107643128,14.816890031242371ZM6.304928107643128,4.90080303124237C5.992146107643127,4.90080303124237,5.737340107643128,5.15560803124237,5.737340107643128,5.468390031242371L5.737340107643128,13.64048003124237C5.737340107643128,13.95326003124237,5.992146107643127,14.20807003124237,6.304928107643128,14.20807003124237L13.878908107643127,14.20807003124237C14.191698107643127,14.20807003124237,14.446498107643128,13.95326003124237,14.446498107643128,13.64048003124237L14.446498107643128,5.468390031242371C14.446498107643128,5.15560803124237,14.191698107643127,4.900802031242371,13.878908107643127,4.900802031242371L6.304928107643128,4.90080303124237Z" fill="#212427" fill-opacity="0.6000000238418579"></path></g></g></g></svg></div></div> <div data-v-44d23264="" class="ng-explain-text"><div data-v-44d23264="" class="ng-explain-margin-left-right-18 ng-border-radius-8 ng-explain-text-box"><div data-v-44d23264="" class="ng-explain-line-title"><div data-v-44d23264="">Text from your selection</div> <div data-v-44d23264="" class="ng-explain-line-title-right"><svg data-v-44d23264="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1" width="13.879655838012695" height="14" viewBox="0 0 13.879655838012695 14"><defs data-v-44d23264=""><clippath data-v-44d23264="" id="master_svg0_18_3518"><rect data-v-44d23264="" x="0" y="0" width="13.879655838012695" height="14" rx="0"></rect></clippath></defs> <g data-v-44d23264="" clip-path="url(#master_svg0_18_3518)" style="opacity: 0.5;"><g data-v-44d23264=""><path data-v-44d23264="" d="M7.6211575,6.98357740234375L11.6196475,2.97133940234375C11.8087275,2.7815994023437502,11.8096875,2.47413040234375,11.6215775,2.28341140234375C11.4329775,2.09221710234375,11.1286375,2.09172730234375,10.9395575,2.28146640234375L6.9400975,6.29419740234375L2.9753735,2.28293540234375C2.7877505,2.09319640234375,2.4824384999999998,2.09221710234375,2.2933595,2.28195640234375C2.1047653,2.47169640234375,2.1042937,2.77965540234375,2.2923885,2.97037340234375L6.2561775,6.98066740234375L2.2595985,10.99047740234375C2.0705198,11.18021740234375,2.0695626,11.48768740234375,2.2576705,11.67840740234375C2.3517255,11.77376740234375,2.4756835,11.82191740234375,2.5996425,11.82191740234375C2.7226295,11.82191740234375,2.8456305,11.77472740234375,2.9396855,11.68034740234375L6.9372175,7.66956740234375L10.9381175,11.71732740234375C11.0321775,11.81268740234375,11.1556475,11.86036740234375,11.2796075,11.86036740234375C11.4030775,11.86036740234375,11.5260775,11.81268740234375,11.6201375,11.71830740234375C11.8087275,11.52856740234375,11.8092075,11.22109740234375,11.6211075,11.03037740234375L7.6211575,6.98357740234375Z" fill="#212427" fill-opacity="0.501960813999176"></path></g></g></svg></div></div> <div data-v-44d23264="" class="ng-explain-line-content clamp-text">
+              
+            </div></div></div> <div data-v-44d23264="" class="ng-explain-markdown"><div data-v-44d23264="" class="ng-explain-margin-left-right-18"><div data-v-44d23264="" id="ng_web_explain_text" class="markdown-body"></div></div></div> <div data-v-44d23264="" class="ng-explain-empty"><div data-v-44d23264="" class="ng-explain-empty-box"><svg data-v-44d23264="" width="117" height="117" viewBox="0 0 1420 1468" fill="none" xmlns="http://www.w3.org/2000/svg"><path data-v-44d23264="" d="M891.5 219C840.3 130.2 797.5 182 782.5 219C732.9 161.4 699.5 226.333 689 266L708.5 1177C918.9 1475.8 1172 1475.5 1298.5 1463.5C1380.5 1448.5 1355 1414.67 1335.5 1383.5C1257.5 1238.83 1098.8 925.3 1088 828.5C1077.2 731.7 1140.5 652.5 1168 616.5C1195.5 580.5 1216.4 511.3 1176 486.5C1135.6 461.7 1086.37 477 1074.5 499.5C1057 532.667 1018.5 597.4 1004.5 591C990.5 584.6 998.667 371.667 1004.5 266C1001.7 178.8 928 198.333 891.5 219Z" fill="#C162FB"></path> <path data-v-44d23264="" d="M357.5 861.499C365.9 940.299 192 1223.33 104 1355C59.9192 1423 97.4999 1434.68 132.5 1443C349.7 1494.6 567.667 1349.16 649.5 1270C702.167 1212.16 813.7 1038.6 838.5 806.998C863.3 575.398 848.834 384.831 838.5 318.498C829.232 258.998 785.667 257.331 758 258.998V222.998C751.6 156.998 671.5 171.5 653 202C599 138 554.667 170.165 541 201.998C458.2 168.798 432.5 215.832 430 243.498C433.334 355.498 438 576.899 430 566.499C422 556.099 407.5 507.498 391 488.999C374 475.998 349.7 468.199 318.5 488.999C287.3 509.799 288.5 549.332 293 566.499C312 601.998 347 762.999 357.5 861.499Z" fill="#5199FF"></path> <path data-v-44d23264="" d="M238 15.5L291 92.5" stroke="#B63FFF" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M1219.92 26L1145.41 82.4493" stroke="#2E83FB" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M1219.92 26L1145.41 82.4493" stroke="#2E83FB" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M1219.92 26L1145.41 82.4493" stroke="#2E83FB" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M1339.63 178.233L1251 207.945" stroke="#2E83FB" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M1339.63 178.233L1251 207.945" stroke="#2E83FB" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M1339.63 178.233L1251 207.945" stroke="#2E83FB" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M1404.43 501.611L1311 504.594" stroke="#2E83FB" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M1404.43 501.611L1311 504.594" stroke="#2E83FB" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M1404.43 501.611L1311 504.594" stroke="#2E83FB" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M1347.43 803.571L1264 761.414" stroke="#2E83FB" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M1347.43 803.571L1264 761.414" stroke="#2E83FB" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M1347.43 803.571L1264 761.414" stroke="#2E83FB" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M84 252.761L165.896 297.828" stroke="#B63FFF" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M15.9443 498.037L107.951 514.551" stroke="#B63FFF" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M66 723.992L156.231 699.572" stroke="#B63FFF" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M128.549 865.642L202.911 809" stroke="#B63FFF" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M433.999 577C418 601.5 364.666 827.499 374.999 843.999" stroke="#C162FB" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M539 215C539 230.6 532.333 437.833 529 539.5" stroke="#C162FB" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M646.5 214C630.9 247.6 627 430.333 627 517.5" stroke="#C162FB" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M812 255.437C800.907 249.07 774.248 240.157 756.36 255.437C738.472 270.717 734 436.179 734 517" stroke="#C162FB" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M793.601 225C784.478 245.162 783.5 230.332 783.5 248" stroke="#871BC9" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M889.289 235C863.289 259.8 866.456 451 871.289 543.5" stroke="#871BC9" stroke-width="30" stroke-linecap="round"></path> <path data-v-44d23264="" d="M1020.5 594C982.9 631.6 940.167 703.667 923.5 735" stroke="#871BC9" stroke-width="30" stroke-linecap="round"></path></svg></div> <div data-v-44d23264="" class="ng-explain-empty-page-summarize"><button data-v-44d23264="" class="ng-explain-empty-btn"><svg data-v-44d23264="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1" width="16" height="16" viewBox="0 0 16 16"><g data-v-44d23264=""><path data-v-44d23264="" d="M2.51386,0L13.4862,0C14.1526,0.000731945,14.7916,0.265819,15.2629,0.737101C15.7342,1.20838,15.9993,1.84737,16,2.51386L16,13.4862C15.9993,14.1526,15.7342,14.7916,15.2629,15.2629C14.7916,15.7342,14.1526,15.9993,13.4862,16L2.51386,16C1.84737,15.9993,1.20838,15.7342,0.737101,15.2629C0.265819,14.7916,0.000731945,14.1526,0,13.4862L0,2.51386C0.000731945,1.84737,0.265819,1.20838,0.737101,0.737101C1.20838,0.265819,1.84737,0.000731945,2.51386,0ZM14.5522,14.5522C14.835,14.2694,14.994,13.886,14.9945,13.4862L14.9945,2.51386C14.994,2.11397,14.8349,1.73059,14.5522,1.44783C14.2694,1.16507,13.886,1.00601,13.4862,1.00554L2.51386,1.00554C2.11397,1.00601,1.73059,1.16507,1.44783,1.44783C1.16507,1.73059,1.00601,2.11397,1.00554,2.51386L1.00554,13.4862C1.00601,13.886,1.16507,14.2694,1.44783,14.5522C1.73059,14.835,2.11397,14.994,2.51386,14.9945L13.4862,14.9945C13.886,14.994,14.2694,14.835,14.5522,14.5522ZM3.7013,4.44952L3.79607,4.44952C3.89607,4.44952,3.99199,4.48925,4.06271,4.55997C4.13342,4.63068,4.17315,4.7266,4.17315,4.8266C4.17315,4.92661,4.13342,5.02252,4.06271,5.09324C3.99199,5.16396,3.89607,5.20368,3.79607,5.20368L3.7013,5.20368C3.60129,5.20368,3.50538,5.16396,3.43466,5.09324C3.36395,5.02252,3.32422,4.92661,3.32422,4.8266C3.32422,4.7266,3.36395,4.63068,3.43466,4.55997C3.50538,4.48925,3.60129,4.44952,3.7013,4.44952ZM6.50149,4.44952L12.1398,4.44952C12.2399,4.44952,12.3357,4.48925,12.4064,4.55997C12.4772,4.63068,12.5169,4.7266,12.5169,4.8266C12.5169,4.92661,12.4772,5.02252,12.4064,5.09324C12.3357,5.16396,12.2399,5.20368,12.1398,5.20368L6.50149,5.20368C6.40148,5.20368,6.30557,5.16396,6.23485,5.09324C6.16414,5.02252,6.12441,4.92661,6.12441,4.8266C6.12441,4.7266,6.16414,4.63068,6.23485,4.55997C6.30557,4.48925,6.40148,4.44952,6.50149,4.44952ZM3.7013,7.56345L3.79607,7.56345C3.89607,7.56345,3.99199,7.60318,4.06271,7.67389C4.13342,7.74461,4.17315,7.84052,4.17315,7.94053C4.17315,8.04056,4.13342,8.13648,4.06271,8.2072C3.99199,8.27792,3.89607,8.3176,3.79607,8.3176L3.7013,8.3176C3.60129,8.3176,3.50538,8.27792,3.43466,8.2072C3.36395,8.13648,3.32422,8.04056,3.32422,7.94053C3.32422,7.84052,3.36395,7.74461,3.43466,7.67389C3.50538,7.60318,3.60129,7.56345,3.7013,7.56345ZM6.50149,7.56345L12.1398,7.56345C12.2399,7.56345,12.3357,7.60318,12.4064,7.67389C12.4772,7.74461,12.5169,7.84052,12.5169,7.94053C12.5169,8.04056,12.4772,8.13648,12.4064,8.2072C12.3357,8.27792,12.2399,8.3176,12.1398,8.3176L6.50149,8.3176C6.40148,8.3176,6.30557,8.27792,6.23485,8.2072C6.16414,8.13648,6.12441,8.04056,6.12441,7.94053C6.12441,7.84052,6.16414,7.74461,6.23485,7.67389C6.30557,7.60318,6.40148,7.56345,6.50149,7.56345ZM3.7013,10.5882L3.79607,10.5882C3.89607,10.5882,3.99199,10.6278,4.06271,10.6986C4.13342,10.7693,4.17315,10.8652,4.17315,10.9652C4.17315,11.0652,4.13342,11.1611,4.06271,11.2318C3.99199,11.3026,3.89607,11.3423,3.79607,11.3423L3.7013,11.3423C3.60129,11.3423,3.50538,11.3026,3.43466,11.2318C3.36395,11.1611,3.32422,11.0652,3.32422,10.9652C3.32422,10.8652,3.36395,10.7693,3.43466,10.6986C3.50538,10.6278,3.60129,10.5882,3.7013,10.5882ZM6.50149,10.5882L12.1398,10.5882C12.2399,10.5882,12.3357,10.6278,12.4064,10.6986C12.4772,10.7693,12.5169,10.8652,12.5169,10.9652C12.5169,11.0652,12.4772,11.1611,12.4064,11.2318C12.3357,11.3026,12.2399,11.3423,12.1398,11.3423L6.50149,11.3423C6.40148,11.3423,6.30557,11.3026,6.23485,11.2318C6.16414,11.1611,6.12441,11.0652,6.12441,10.9652C6.12441,10.8652,6.16414,10.7693,6.23485,10.6986C6.30557,10.6278,6.40148,10.5882,6.50149,10.5882Z" fill-rule="evenodd" fill="#FFFFFF" fill-opacity="1"></path></g></svg> <span data-v-44d23264="" class="btn-txt">Summarize this page</span></button></div></div></div></div> <!----> <!----></div> <!----></div><div data-v-4f28e988=""><div data-v-4f28e988="" id="ng-popup" style="display: none;"><div data-v-4f28e988="" class="ng-popup-content"><div data-v-4f28e988="" class="ng-box1"><svg data-v-4f28e988="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1" width="14" height="14.538461685180664" viewBox="0 0 14 14.538461685180664"><defs data-v-4f28e988=""><clippath data-v-4f28e988="" id="master_svg0_18_3965"><rect data-v-4f28e988="" x="0" y="0" width="14" height="14.538461685180664" rx="0"></rect></clippath></defs><g data-v-4f28e988="" clip-path="url(#master_svg0_18_3965)"><g data-v-4f28e988=""><path data-v-4f28e988="" d="M10.521225000000001,12.3871296875C10.452345000000001,12.4628296875,10.386295,12.5322296875,10.324335,12.5947296875C10.391275,12.5250296875,10.456855000000001,12.4558296875,10.521225000000001,12.3871296875C11.545315,11.2603196875,13.201985,8.6986896875,11.537915,5.6746196875C11.118715,4.9477396875,9.343454999999999,3.5302496875,7.5343350000000004,4.0347896875C6.767915,4.0994896875,5.201117,4.8650296875,5.0651399999999995,7.4095996875C4.399223,6.2344496875,4.043888,3.5372696875000003,7.078055,2.3664016875C8.586485,1.7842986875,12.155685,2.6299126875,13.157725,5.1487896875C13.722235,6.5679996875,13.849445,8.8314396875,10.521225000000001,12.3871296875Z" fill="#2E83FB" fill-opacity="1"></path></g><g data-v-4f28e988=""><path data-v-4f28e988="" d="M1.596442109375,11.149918701171874C1.529475109375,11.104638701171876,1.467207409375,11.060618701171876,1.409912109375,11.018438701171874C1.472501709375,11.063008701171874,1.534681109375,11.106858701171875,1.596442109375,11.149918701171874C2.846582109375,11.994818701171875,5.737342109375,13.276108701171875,8.586892109375,11.217448701171875C9.260502109375,10.710028701171876,10.376882109375,8.847918701171874,9.628842109375,7.144958701171875C9.461492109375,6.403638701171875,8.483902109375,4.972716701171875,5.911722109375,5.179543701171875C7.002272109375,4.370951701171875,9.661992109375,3.662968701171875,11.242462109375,6.475618701171875C12.028112109375,7.873958701171874,11.656212109375,11.479538701171876,9.261872109375,12.796498701171876C7.907412109375,13.541458701171875,5.639942109375,13.968708701171876,1.596442109375,11.149918701171874Z" fill="#2E83FB" fill-opacity="1"></path></g><g data-v-4f28e988=""><path data-v-4f28e988="" d="M3.328758203125,1.43866787890625C3.439858203125,1.31567087890625,3.545428203125,1.20617947890625,3.641008203125,1.11090087890625C3.533608203125,1.22136887890625,3.429558203125,1.33062187890625,3.328758203125,1.43866787890625C2.290068203125,2.58845087890625,0.765628203125,4.91831087890625,2.351848203125,7.84360087890625C2.766568203125,8.57300087890625,4.565568203125,10.18113087890625,6.377798203125,9.68762087890625C7.144588203125,9.62756087890625,8.716158203125,8.871470878906251,8.867908203125,6.32778087890625C9.526468203125,7.50693087890625,9.865118203125,10.20623087890625,6.823708203125,11.35870087890625C5.311658203125,11.93170087890625,1.747778203125,11.06448087890625,0.761441203125,8.539550878906251C0.21209920312500002,7.13330087890625,0.09520920312499997,4.90467087890625,3.328758203125,1.43866787890625Z" fill="#2E83FB" fill-opacity="1"></path></g><g data-v-4f28e988=""><path data-v-4f28e988="" d="M12.709551953125,4.310746494140625C12.808251953125,4.407076494140625,12.896851953125,4.498506494140625,12.974851953125,4.582366494140625C12.885651953125,4.489496494140624,12.797151953125,4.398966494140625,12.709551953125,4.310746494140625C11.605341953125,3.233176494140625,9.232501953125,1.543162494140625,6.149701953125,2.993306494140625C5.392321953125,3.368106494140625,3.755451953125,5.068296494140625,4.169691953125,6.878886494140625C4.194431953125,7.637996494140625,4.885491953124999,9.223456494140626,7.451701953125,9.492616494140625C6.227881953124999,10.086866494140626,3.481231953125,10.294066494140624,2.458154953125,7.240216494140625C1.949520953125,5.721976494140625,2.994201953125,2.2476364941406253,5.594841953125,1.393383494140625C7.050711953125,0.915170494140625,9.326561953125001,0.9068794941406251,12.709551953125,4.310746494140625Z" fill="#2E83FB" fill-opacity="1"></path></g></g></svg> <div data-v-4f28e988="" class="ng-text">summarize</div> <div data-v-4f28e988="" class="ng-line3"></div></div> <span data-v-4f28e988=""><div role="tooltip" id="el-popover-8810" aria-hidden="true" class="el-popover el-popper el-popover--plain" tabindex="0" style="display: none;"><!---->Disable for this site</div><span class="el-popover__reference-wrapper"><svg data-v-4f28e988="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1" width="9.47799301147461" height="8.845172882080078" viewBox="0 0 9.47799301147461 8.845172882080078" class="el-popover__reference" aria-describedby="el-popover-8810" tabindex="0" style="margin-left: 6px; margin-top: -2px; cursor: pointer;"><g data-v-4f28e988=""><path data-v-4f28e988="" d="M7.15728,0.0318839C7.0589,-0.0265303,6.93245,-0.00274923,6.86201,0.0874102C6.75981,0.218842,6.64525,0.340186,6.51991,0.449779C6.42633,0.531264,6.41801,0.673755,6.50149,0.765568C6.5181,0.784022,6.53767,0.799585,6.55938,0.811621C8.61751,1.95253,9.13179,4.68327,7.62968,6.49468C6.12757,8.30609,3.34883,8.30609,1.84672,6.49468C0.344606,4.68326,0.85889,1.95253,2.91702,0.811621C3.0254,0.752131,3.06413,0.615444,3.00307,0.507937C2.99068,0.48647,2.97485,0.467179,2.95623,0.450831C2.83107,0.340856,2.71653,0.219357,2.61412,0.0879366C2.5438,-0.00205509,2.41753,-0.0257295,2.31938,0.0326734C-0.200255,1.5291,-0.771111,4.9309,1.12203,7.16783C3.01518,9.40476,6.46454,9.4042,8.35696,7.16665C10.2494,4.9291,9.6774,1.52748,7.15728,0.0318839ZM4.47307,5.08136L5.00412,5.08136C5.1279,5.08209,5.2288,4.98225,5.22938,4.85846L5.22938,0.223989C5.2288,0.100203,5.1279,0.000365824,5.00412,0.00109449L4.47307,0.00109449C4.34924,0.000365824,4.24827,0.10016,4.24754,0.223989L4.24754,4.85952C4.24827,4.98324,4.34908,5.08299,4.4728,5.08241L4.47307,5.08136Z" fill="#A5A5A5" fill-opacity="1"></path></g></svg></span></span></div></div></div></body></html>
